@@ -27,6 +27,7 @@ namespace ASMRDarling.API
 
         public Function()
         {
+            MakeSkillResponse($"Welcome to {INVOCATION_NAME}", false);
             _httpClient = new HttpClient();
         }
 
@@ -46,11 +47,11 @@ namespace ASMRDarling.API
                     return MakeSkillResponse($"Sorry Bryan. {INVOCATION_NAME} did not work.", false);
                 }
 
-                return MakeSkillResponse($"You have selected {fileRequested}", true);
+                return MakeSkillResponse($"You have selected {fileRequested}", false);
             }
             else
             {
-                return MakeSkillResponse("You have failed me", true);
+                return MakeSkillResponse("Sorry I did not get the intent", false);
             }
         }
 
