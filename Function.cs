@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-
 using Amazon.Lambda.Core;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -22,7 +21,7 @@ namespace ASMRDarling.API
         /// <returns></returns>
 
         private static HttpClient _httpClient;
-        public const string INVOCATION_NAME = "Darling's Blessings";
+        public const string INVOCATION_NAME = "Darling's Gift";
 
 
         public Function()
@@ -35,16 +34,31 @@ namespace ASMRDarling.API
         {
             var requestType = input.GetRequestType();
 
-            if(requestType == typeof(LaunchRequest))
+            if (requestType == typeof(LaunchRequest))
             {
-                return MakeSkillResponse($"{INVOCATION_NAME} Launched.", false);
+                //return MakeSkillResponse($"{INVOCATION_NAME} Launched.", false);
+                var response = new ResponseBody
+                {
+                    ShouldEndSession = false,
+                    OutputSpeech = new SsmlOutputSpeech
+                    {
+                        Ssml = "<speak> <audio src='https://s3.amazonaws.com/asmr-darling-api-media/m4a/10+Triggers+to+Help+You+Sleep.m4a' /> <amazon:effect name='whispered'> <prosody rate='slow'> Hey, <break time='1s'/> it's me. ASMR Darling. </prosody> </amazon:effect> </speak>"
+                    }
+                };
 
+                var skillResponse = new SkillResponse
+                {
+                    Response = response,
+                    Version = "1.0"
+                };
+
+                return skillResponse;
             }
 
             if (requestType == typeof(IntentRequest))
             {
                 var intentRequest = input.Request as IntentRequest;
-                var fileRequested = intentRequest?.Intent?.Slots["FileName"].Value;
+                var fileRequested = intentRequest?.Intent?.Slots["ASMR_Media_File"].Value;
 
                 if (fileRequested == null)
                 {
