@@ -22,12 +22,11 @@ namespace ASMRDarling.API
         /// <returns></returns>
 
         private static HttpClient _httpClient;
-        public const string INVOCATION_NAME = "ASMR Darling";
+        public const string INVOCATION_NAME = "Darling's Blessings";
 
 
         public Function()
         {
-            MakeSkillResponse($"Welcome to {INVOCATION_NAME}", false);
             _httpClient = new HttpClient();
         }
 
@@ -36,10 +35,16 @@ namespace ASMRDarling.API
         {
             var requestType = input.GetRequestType();
 
+            if(requestType == typeof(LaunchRequest))
+            {
+                return MakeSkillResponse($"{INVOCATION_NAME} Launched.", false);
+
+            }
+
             if (requestType == typeof(IntentRequest))
             {
                 var intentRequest = input.Request as IntentRequest;
-                var fileRequested = intentRequest?.Intent?.Slots["file"].Value;
+                var fileRequested = intentRequest?.Intent?.Slots["FileName"].Value;
 
                 if (fileRequested == null)
                 {
