@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
@@ -27,11 +28,11 @@ namespace ASMRDarling.API
         public const string MEDIA_INTENT_NAME = "PlayMedia";
 
 
-        // Slot
-        public const string MEDIA_FILE_SLOT_NAME = "ASMR_MEDIA_FILE";
+        // Slot names
+        public const string MEDIA_FILE_SLOT_NAME = "MediaFileName";
 
 
-        public const string clipURL = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/10TriggersToHelpYouSleep.mp3";
+        //public const string clipURL = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/10TriggersToHelpYouSleep.mp3";
 
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
@@ -39,7 +40,7 @@ namespace ASMRDarling.API
             SkillResponse response = new SkillResponse();
 
             var log = context.Logger;
-            log.LogLine($"{INVOCATION_NAME} skill started");
+            log.LogLine($"<Devlog> {INVOCATION_NAME} skill started");
 
             var requestType = input.GetRequestType();
             log.LogLine($"Request type: {requestType}");
@@ -73,6 +74,8 @@ namespace ASMRDarling.API
                     }
                 };
 
+                //response = ResponseBuilder.Ask(output, reprompt);
+
                 response = ResponseBuilder.Ask(output, reprompt);
 
                 //var response = new ResponseBody
@@ -105,8 +108,11 @@ namespace ASMRDarling.API
 
             else if (requestType == typeof(IntentRequest))
             {
+                log.LogLine($"Intent requested: {((IntentRequest)input.Request).Intent.Name}");
                 var intentRequest = input.Request as IntentRequest;
-                var fileRequested = intentRequest?.Intent?.Slots[MEDIA_FILE_SLOT_NAME].Value;
+                var fileRequested = intentRequest.Intent.Slots[MEDIA_FILE_SLOT_NAME].Value;
+
+                log.LogLine($"File requested: {fileRequested}");
 
                 if (fileRequested == null)
                 {
@@ -139,10 +145,35 @@ namespace ASMRDarling.API
                     response = ResponseBuilder.Ask(output, reprompt);
                 }
 
+                log.LogLine($"Intent name is  { intentRequest.Intent.Name }");
+
                 switch (intentRequest.Intent.Name)
                 {
                     case MEDIA_INTENT_NAME:
-                        response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, clipURL, "Any Token");
+                        log.LogLine("switch entered");
+                        try
+                        {
+                            log.LogLine("HI THIS IS THE RIGHT PLACE");
+                            response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, clipURL, "Any Token");
+                        }
+                        catch (Exception ex)
+                        {
+                            log.LogLine(ex.ToString());
+                        }
+                        break;
+                    default:
+                        var output = new SsmlOutputSpeech()
+                        {
+                            Ssml = "<speak>" +
+                                "<amazon:effect name='whispered'>" +
+                                    "<prosody rate='slow'>" +
+                                        "I am ending the session." +
+                                    "</prosody>" +
+                                "</amazon:effect>" +
+                           "</speak>"
+                        };
+
+                        response = ResponseBuilder.Tell(output);
                         break;
                 }
 
@@ -157,21 +188,21 @@ namespace ASMRDarling.API
         }
 
 
-        private SkillResponse MakeSkillResponse(string outputSpeech, bool shouldEndSession, string repromptText = "Hello world.")
-        {
-            var response = new ResponseBody
-            {
-                ShouldEndSession = shouldEndSession,
-                OutputSpeech = new PlainTextOutputSpeech { Text = outputSpeech }
-            };
+        //private SkillResponse MakeSkillResponse(string outputSpeech, bool shouldEndSession, string repromptText = "Hello world.")
+        //{
+        //    var response = new ResponseBody
+        //    {
+        //        ShouldEndSession = shouldEndSession,
+        //        OutputSpeech = new PlainTextOutputSpeech { Text = outputSpeech }
+        //    };
 
-            var skillResponse = new SkillResponse
-            {
-                Response = response,
-                Version = "1.0"
-            };
+        //    var skillResponse = new SkillResponse
+        //    {
+        //        Response = response,
+        //        Version = "1.0"
+        //    };
 
-            return skillResponse;
-        }
+        //    return skillResponse;
+        //}
     }
 }
