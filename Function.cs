@@ -1,38 +1,37 @@
 using System;
 using System.Threading.Tasks;
-using Alexa.NET;
+using Newtonsoft.Json;
+using Amazon.Lambda.Core;
+
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
-using Amazon.Lambda.Core;
+using System.Text.RegularExpressions;
 
-// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
 
 namespace ASMRDarling.API
 {
     public class Function
     {
-        /// <summary>
-        /// A simple function that takes a string and does a ToUpper
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-
-
+        // Invocation
         public const string INVOCATION_NAME = "Darling's Gift";
 
-        // Intents
+        // Intent names
         public const string MEDIA_INTENT_NAME = "PlayMedia";
-
 
         // Slot names
         public const string MEDIA_FILE_SLOT_NAME = "MediaFileName";
 
+        // Base URL
+        public const string MEDIA_BASE_URL = "https://s3.amazonaws.com/asmr-darling-api-media";
 
-        //public const string clipURL = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/10TriggersToHelpYouSleep.mp3";
+
+        // what is your name?? ask and store dynamo db?
+
+        // tell list of clips that she can play (another intent?).
 
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
@@ -40,14 +39,15 @@ namespace ASMRDarling.API
             SkillResponse response = new SkillResponse();
 
             var log = context.Logger;
-            log.LogLine($"<Devlog> {INVOCATION_NAME} skill started");
-
             var requestType = input.GetRequestType();
-            log.LogLine($"Request type: {requestType}");
+
+            log.LogLine($"<Devlog> {INVOCATION_NAME} started");
+            log.LogLine($"<Devlog> Input info: {JsonConvert.SerializeObject(input)}");
+            log.LogLine($"<Devlog> Request type: {requestType}");
 
             if (requestType == typeof(LaunchRequest))
             {
-                log.LogLine($"Launch request processing started");
+                log.LogLine($"<Devlog> Default launch request processing started");
 
                 var output = new SsmlOutputSpeech()
                 {
@@ -55,154 +55,74 @@ namespace ASMRDarling.API
                                 "<amazon:effect name='whispered'>" +
                                     "<prosody rate='slow'>" +
                                         "Hey, it's me. ASMR Darling." +
+                                        "You can say things like, play 10 triggers to help you sleep, to begin." +
                                     "</prosody>" +
                                 "</amazon:effect>" +
                            "</speak>"
                 };
 
-                var reprompt = new Reprompt()
-                {
-                    OutputSpeech = new SsmlOutputSpeech()
-                    {
-                        Ssml = "<speak>" +
-                                    "<amazon:effect name='whispered'>" +
-                                        "<prosody rate='slow'>" +
-                                            "You can say things like, play 10 triggers help you sleep, to begin." +
-                                        "</prosody>" +
-                                    "</amazon:effect>" +
-                               "</speak>"
-                    }
-                };
-
-                //response = ResponseBuilder.Ask(output, reprompt);
-
-                response = ResponseBuilder.Ask(output, reprompt);
-
-                //var response = new ResponseBody
-                //{
-                //    ShouldEndSession = false,
-                //    OutputSpeech = new SsmlOutputSpeech
-                //    {
-                //        Ssml = "<speak><audio src='https://s3.amazonaws.com/asmr-darling-api-media/mp3/10TriggersToHelpYouSleep.mp3' /> <amazon:effect name='whispered'> <prosody rate='slow'> Hey, <break time='1s'/> it's me. ASMR Darling. </prosody> </amazon:effect> </speak>"
-                //    }
-
-                //    //
-                //};
-
-                //var skillResponse = new SkillResponse
-                //{
-                //    Response = response,
-                //    Version = "1.0"
-                //};
-
-                //return skillResponse;
+                response = ResponseBuilder.Ask(output, null);
             }
-
-
-            // what is your name?? ask and store dynamo db?
-
-            // tell list of clips that she can play.
-
-
-
-
             else if (requestType == typeof(IntentRequest))
             {
-                log.LogLine($"Intent requested: {((IntentRequest)input.Request).Intent.Name}");
                 var intentRequest = input.Request as IntentRequest;
-                var fileRequested = intentRequest.Intent.Slots[MEDIA_FILE_SLOT_NAME].Value;
 
-                log.LogLine($"File requested: {fileRequested}");
-
-                if (fileRequested == null)
-                {
-                    //context.Logger.LogLine($"The file {fileRequested} was not avaliable."); // null value anyways
-                    var output = new SsmlOutputSpeech()
-                    {
-                        Ssml = "<speak>" +
-                                "<amazon:effect name='whispered'>" +
-                                    "<prosody rate='slow'>" +
-                                        "Sorry, you need to tell me which file to play." +
-                                    "</prosody>" +
-                                "</amazon:effect>" +
-                           "</speak>"
-                    };
-
-                    var reprompt = new Reprompt()
-                    {
-                        OutputSpeech = new SsmlOutputSpeech()
-                        {
-                            Ssml = "<speak>" +
-                                        "<amazon:effect name='whispered'>" +
-                                            "<prosody rate='slow'>" +
-                                                "So, which file do you want me to play?" +
-                                            "</prosody>" +
-                                        "</amazon:effect>" +
-                                   "</speak>"
-                        }
-                    };
-
-                    response = ResponseBuilder.Ask(output, reprompt);
-                }
-
-                log.LogLine($"Intent name is  { intentRequest.Intent.Name }");
+                log.LogLine($"<Devlog> Intent requested: {intentRequest.Intent.Name}");
 
                 switch (intentRequest.Intent.Name)
                 {
                     case MEDIA_INTENT_NAME:
-                        log.LogLine("switch entered");
                         try
                         {
-                            log.LogLine("HI THIS IS THE RIGHT PLACE");
-                            response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, clipURL, "Any Token");
+                            Slot slot = intentRequest.Intent.Slots[MEDIA_FILE_SLOT_NAME];
+                            string slotValue = slot.Value;
+
+                            log.LogLine($"<Devlog> Requested slot value (synonym): {slotValue}");
+
+                            // Handling synonyms (if multiple slots & values are available, this might not work as intended)
+                            ResolutionAuthority[] resolution = slot.Resolution.Authorities;
+                            ResolutionValueContainer[] container = resolution[0].Values;
+
+                            string fileType = "mp3";
+                            string fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
+
+                            log.LogLine($"<Devlog> Media file requested: {fileName}.{fileType}");
+
+#warning make url builder mp3, mp4, image, screen availability should have been figured out by now
+
+                            string url = $"{MEDIA_BASE_URL}/{fileType}/{fileName}.{fileType}";
+
+                            log.LogLine($"<Devlog> Media file source URL: {url}");
+
+                            response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
                         }
                         catch (Exception ex)
                         {
-                            log.LogLine(ex.ToString());
+                            log.LogLine($"<Devlog> Exception caught: {ex.ToString()}");
                         }
+
                         break;
                     default:
                         var output = new SsmlOutputSpeech()
                         {
                             Ssml = "<speak>" +
-                                "<amazon:effect name='whispered'>" +
-                                    "<prosody rate='slow'>" +
-                                        "I am ending the session." +
-                                    "</prosody>" +
-                                "</amazon:effect>" +
-                           "</speak>"
+                                        "<amazon:effect name='whispered'>" +
+                                            "<prosody rate='slow'>" +
+                                                "Sorry, I didn't get your intention, can you please tell me one more time?." +
+                                            "</prosody>" +
+                                        "</amazon:effect>" +
+                                   "</speak>"
                         };
 
-                        response = ResponseBuilder.Tell(output);
+                        response = ResponseBuilder.Ask(output, null);
+
                         break;
                 }
-
-
             }
-            //else
-            //{
-            //    return MakeSkillResponse("Sorry I did not get the intent", false);
-            //}
+
+            log.LogLine($"<Devlog> Response from the API {response}");
 
             return response;
         }
-
-
-        //private SkillResponse MakeSkillResponse(string outputSpeech, bool shouldEndSession, string repromptText = "Hello world.")
-        //{
-        //    var response = new ResponseBody
-        //    {
-        //        ShouldEndSession = shouldEndSession,
-        //        OutputSpeech = new PlainTextOutputSpeech { Text = outputSpeech }
-        //    };
-
-        //    var skillResponse = new SkillResponse
-        //    {
-        //        Response = response,
-        //        Version = "1.0"
-        //    };
-
-        //    return skillResponse;
-        //}
     }
 }
