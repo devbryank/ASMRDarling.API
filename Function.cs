@@ -55,13 +55,26 @@ namespace ASMRDarling.API
                                 "<amazon:effect name='whispered'>" +
                                     "<prosody rate='slow'>" +
                                         "Hey, it's me. ASMR Darling." +
-                                        "You can say things like, play 10 triggers to help you sleep, to begin." +
                                     "</prosody>" +
                                 "</amazon:effect>" +
                            "</speak>"
                 };
 
-                response = ResponseBuilder.Ask(output, null);
+                var reprompt = new Reprompt()
+                {
+                    OutputSpeech = new SsmlOutputSpeech()
+                    {
+                        Ssml = "<speak>" +
+                                    "<amazon:effect name='whispered'>" +
+                                        "<prosody rate='slow'>" +
+                                            "You can say things like, play 10 triggers to help you sleep, to begin." +
+                                        "</prosody>" +
+                                    "</amazon:effect>" +
+                               "</speak>"
+                    }
+                };
+
+                response = ResponseBuilder.Ask(output, reprompt);
             }
             else if (requestType == typeof(IntentRequest))
             {
@@ -83,7 +96,11 @@ namespace ASMRDarling.API
                             ResolutionAuthority[] resolution = slot.Resolution.Authorities;
                             ResolutionValueContainer[] container = resolution[0].Values;
 
-                            string fileType = "mp3";
+                            bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
+
+                            log.LogLine($"<Devlog> Diplay availability: {hasDisplay}");
+
+                            string fileType = hasDisplay == true ? "mp4" : "mp3";
                             string fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
 
                             log.LogLine($"<Devlog> Media file requested: {fileName}.{fileType}");
@@ -120,7 +137,7 @@ namespace ASMRDarling.API
                 }
             }
 
-            log.LogLine($"<Devlog> Response from the API {response}");
+            log.LogLine($"<Devlog> Response from the API {JsonConvert.SerializeObject(response.Response)}");
 
             return response;
         }
