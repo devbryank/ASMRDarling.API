@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Alexa.NET.Request.Type;
+using Amazon.Lambda.Core;
+using Alexa.NET.Request;
 using Alexa.NET.Response;
 
 namespace ASMRDarling.API.Interfaces
 {
     public interface IIntentHandler
     {
-        Task<SkillResponse> HandleIntent(IntentRequest input);
+        Task<SkillResponse> HandleIntent(Intent input, Session session, ILambdaLogger logger);
     }
 }

@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
+using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {
-    public class LaunchRequestHandler : ILaunchRequestHandler
+    class LaunchRequestHandler : ILaunchRequestHandler
     {
-        public async Task<SkillResponse> HandleRequest(LaunchRequest request)
+        public LaunchRequestHandler() { }
+
+
+        public async Task<SkillResponse> HandleRequest(LaunchRequest request, ILambdaLogger logger)
         {
+            logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Launch request handling started");
+
             var output = new SsmlOutputSpeech()
             {
                 Ssml = "<speak>" +
@@ -31,13 +38,13 @@ namespace ASMRDarling.API.Handlers
         }
 
 
-        public async Task<SkillResponse> HandleRequest(IntentRequest request)
+        public async Task<SkillResponse> HandleRequest(IntentRequest request, Session session, ILambdaLogger logger)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task<SkillResponse> HandleRequest(AudioPlayerRequest request)
+        public async Task<SkillResponse> HandleRequest(AudioPlayerRequest request, ILambdaLogger logger)
         {
             throw new NotImplementedException();
         }
