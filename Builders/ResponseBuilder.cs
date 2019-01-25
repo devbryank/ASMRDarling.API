@@ -1,8 +1,8 @@
-﻿using Alexa.NET.Request;
+﻿using System.Linq;
+using System.Collections.Generic;
+using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ASMRDarling.API
 {

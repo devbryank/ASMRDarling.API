@@ -1,86 +1,61 @@
 using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Amazon.Lambda.Core;
-
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
-using System.Text.RegularExpressions;
+using ASMRDarling.API.Interfaces;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
-
 
 namespace ASMRDarling.API
 {
     public class Function
     {
-        // Invocation
         public const string INVOCATION_NAME = "Darling's Gift";
-
-        // Intent names
         public const string MEDIA_INTENT_NAME = "PlayMedia";
-
-        // Slot names
         public const string MEDIA_FILE_SLOT_NAME = "MediaFileName";
-
-        // Base URL
         public const string MEDIA_BASE_URL = "https://s3.amazonaws.com/asmr-darling-api-media";
 
-
-        // what is your name?? ask and store dynamo db?
-
-        // tell list of clips that she can play (another intent?).
+        private readonly ILaunchRequestHandler _launchRequestHandler;
 
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
+            var log = context.Logger;
+            log.LogLine($"[ASMRDaring.API] {INVOCATION_NAME} launched");
+            log.LogLine($"[ASMRDaring.API] Input details: {JsonConvert.SerializeObject(input)}");
+
+            var requestType = input.GetRequestType().ToString();
+            log.LogLine($"[ASMRDaring.API] Request type: {requestType}");
+
             SkillResponse response = new SkillResponse();
 
-            var log = context.Logger;
-            var requestType = input.GetRequestType();
-
-            log.LogLine($"<Devlog> {INVOCATION_NAME} started");
-            log.LogLine($"<Devlog> Input info: {JsonConvert.SerializeObject(input)}");
-            log.LogLine($"<Devlog> Request type: {requestType}");
-
-            if (requestType == typeof(LaunchRequest))
+            switch (requestType)
             {
-                log.LogLine($"<Devlog> Default launch request processing started");
+                case "LaunchRequest":
+                    log.LogLine($"[ASMRDaring.API] Launch request processing started");
+                    response = await _launchRequestHandler.HandleRequest(input.Request as LaunchRequest);
+                    break;
+                case "IntentRequest":
+                    log.LogLine($"[ASMRDaring.API] Intent request processing started");
 
-                var output = new SsmlOutputSpeech()
-                {
-                    Ssml = "<speak>" +
-                                "<amazon:effect name='whispered'>" +
-                                    "<prosody rate='slow'>" +
-                                        "Hey, it's me. ASMR Darling." +
-                                    "</prosody>" +
-                                "</amazon:effect>" +
-                           "</speak>"
-                };
-
-                var reprompt = new Reprompt()
-                {
-                    OutputSpeech = new SsmlOutputSpeech()
-                    {
-                        Ssml = "<speak>" +
-                                    "<amazon:effect name='whispered'>" +
-                                        "<prosody rate='slow'>" +
-                                            "You can say things like, play 10 triggers to help you sleep, to begin." +
-                                        "</prosody>" +
-                                    "</amazon:effect>" +
-                               "</speak>"
-                    }
-                };
-
-                response = ResponseBuilder.Ask(output, reprompt);
+                    break;
             }
-            else if (requestType == typeof(IntentRequest))
+
+
+
+
+
+
+            if (requestType == typeof(IntentRequest))
             {
                 var intentRequest = input.Request as IntentRequest;
 
-                log.LogLine($"<Devlog> Intent requested: {intentRequest.Intent.Name}");
+                log.LogLine($"[ASMRDaring.API] Intent requested: {intentRequest.Intent.Name}");
 
                 switch (intentRequest.Intent.Name)
                 {
@@ -90,7 +65,7 @@ namespace ASMRDarling.API
                             Slot slot = intentRequest.Intent.Slots[MEDIA_FILE_SLOT_NAME];
                             string slotValue = slot.Value;
 
-                            log.LogLine($"<Devlog> Requested slot value (synonym): {slotValue}");
+                            log.LogLine($"[ASMRDaring.API] Requested slot value (synonym): {slotValue}");
 
                             // Handling synonyms (if multiple slots & values are available, this might not work as intended)
                             ResolutionAuthority[] resolution = slot.Resolution.Authorities;
@@ -98,24 +73,24 @@ namespace ASMRDarling.API
 
                             bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
 
-                            log.LogLine($"<Devlog> Diplay availability: {hasDisplay}");
+                            log.LogLine($"[ASMRDaring.API] Diplay availability: {hasDisplay}");
 
                             string fileType = hasDisplay == true ? "mp4" : "mp3";
                             string fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
 
-                            log.LogLine($"<Devlog> Media file requested: {fileName}.{fileType}");
+                            log.LogLine($"[ASMRDaring.API] Media file requested: {fileName}.{fileType}");
 
 #warning make url builder mp3, mp4, image, screen availability should have been figured out by now
 
                             string url = $"{MEDIA_BASE_URL}/{fileType}/{fileName}.{fileType}";
 
-                            log.LogLine($"<Devlog> Media file source URL: {url}");
+                            log.LogLine($"[ASMRDaring.API] Media file source URL: {url}");
 
                             response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
                         }
                         catch (Exception ex)
                         {
-                            log.LogLine($"<Devlog> Exception caught: {ex.ToString()}");
+                            log.LogLine($"[ASMRDaring.API] Exception caught: {ex.ToString()}");
                         }
 
                         break;
@@ -137,7 +112,7 @@ namespace ASMRDarling.API
                 }
             }
 
-            log.LogLine($"<Devlog> Response from the API {JsonConvert.SerializeObject(response.Response)}");
+            log.LogLine($"[ASMRDaring.API] Response from the API {JsonConvert.SerializeObject(response.Response)}");
 
             return response;
         }
