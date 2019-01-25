@@ -39,7 +39,22 @@ namespace ASMRDarling.API.Handlers
 
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file source URL: {url}");
 
-            return ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
+            SkillResponse response = new SkillResponse();
+
+            if (hasDisplay == true)
+            {
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a Video App response");
+
+                response = ResponseBuilder.Empty();
+                response.Response.Directives.Add(new VideoAppDirective(url));
+            }
+            else
+            {
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating an Audio Player response");
+
+                response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
+            }
+            return response;
         }
     }
 }
