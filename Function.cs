@@ -46,6 +46,7 @@ namespace ASMRDarling.API
                     logger.LogLine($"[Function.FunctionHandler()] Launch request processing started");
                     response = await _launchRequestHandler.HandleRequest(launchRequest, logger);
                     break;
+
                 case "IntentRequest":
                     var intentRequest = input.Request as IntentRequest;
                     logger.LogLine($"[Function.FunctionHandler()] Intent request processing started");

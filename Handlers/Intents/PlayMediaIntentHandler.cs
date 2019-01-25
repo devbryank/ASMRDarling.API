@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Amazon.Lambda.Core;
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
-using ASMRDarling.API.Interfaces;
-using System.Text.RegularExpressions;
 using Alexa.NET.Response.Directive;
+using ASMRDarling.API.Builders;
+using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {
@@ -24,19 +26,16 @@ namespace ASMRDarling.API.Handlers
 
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Requested slot value (synonym): {slotValue}");
 
-            // Handling synonyms (if multiple slots & values are available, this might not work as intended)
             ResolutionAuthority[] resolution = slot.Resolution.Authorities;
             ResolutionValueContainer[] container = resolution[0].Values;
 
             bool? hasDisplay = session.Attributes["has_display"] as bool?;
             string fileType = hasDisplay == true ? "mp4" : "mp3";
-            string fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
+            var fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
 
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file requested: {fileName}.{fileType}");
 
-#warning make url builder mp3, mp4, image, screen availability should have been figured out by now
-
-            string url = $"{MEDIA_BASE_URL}/{fileType}/{fileName}.{fileType}";
+            string url = UrlBuilder.GetS3FileSourceUrl(MEDIA_BASE_URL, fileName, fileType);
 
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file source URL: {url}");
 
