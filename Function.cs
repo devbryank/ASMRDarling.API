@@ -5,8 +5,8 @@ using Amazon.Lambda.Core;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-using ASMRDarling.API.Interfaces;
 using ASMRDarling.API.Handlers;
+using ASMRDarling.API.Interfaces;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -36,6 +36,8 @@ namespace ASMRDarling.API
             if (session.Attributes == null)
                 session.Attributes = new Dictionary<string, object>();
             session.Attributes["has_display"] = hasDisplay;
+            logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
+
 
             SkillResponse response = new SkillResponse();
 
