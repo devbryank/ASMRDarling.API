@@ -8,6 +8,9 @@ using Alexa.NET.Response;
 using Alexa.NET.Response.APL;
 using Alexa.NET.APL.Components;
 using ASMRDarling.API.Interfaces;
+using System.Collections;
+using System.Collections.Generic;
+using Alexa.NET.APL.Commands;
 
 namespace ASMRDarling.API.Handlers
 {
@@ -45,30 +48,49 @@ namespace ASMRDarling.API.Handlers
                            "</speak>"
                 };
 
+                var style = new Style();
+                IList<StyleValue> styleList = new List<StyleValue>();
+                IDictionary<string, string> dict = new Dictionary<string, string>
+                {
+                    { "backgroundColor", "white" }
+                };
+                styleList.Add(new StyleValue(dict));
+                style.Values = styleList;
+
+                List<VideoSource> videoList = new List<VideoSource> {
+                    new VideoSource("https://s3.amazonaws.com/asmr-darling-api-media/mp4/100triggerstohelpyousleep.mp4")
+                };
+
                 // APL display to return
                 var mainLayout =
                         new Layout(
                             new[] {
                                 new Container (
                                     new Video(
-                                    ){}, // End of Video
+                                    ) {Width = "80%", Source = videoList, Autoplay=true}, // End of Video
                                     new Sequence(
                                         new APLComponent[] {
                                             // List of thumbnails
                                             new Text("Video List") {FontSize = "24dp", TextAlign = "center"},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png") {Width = 200, Height = 200},
-                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png") {Width = 200, Height = 200},
+                                            new TouchWrapper(
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") {Width = 200, Height = 150}){
+                                                OnPress = new SendEvent{
+
+                                                    Arguments = null
+                                                }
+                                            },
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png") {Width = 200, Height = 150},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png") {Width = 200, Height = 150},
                                         } // End of APLComponent
-                                    ){Height = "100vh", AlignSelf = "end", PaddingRight = "20px"} // End of Sequence
-                                ){Direction = "row"} // End of Container
+                                    ) {Width = "20%", Height = "100vh", AlignSelf = "end", Style=style} // End of Sequence
+                                ) {Direction = "row", Style = style} // End of Container
                             } // End of array
                         ); // End of Layout
 
