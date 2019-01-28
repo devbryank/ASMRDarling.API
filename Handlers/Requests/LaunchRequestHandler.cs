@@ -13,106 +13,102 @@ namespace ASMRDarling.API.Handlers
 {
     class LaunchRequestHandler : ILaunchRequestHandler
     {
+        // Constructor
         public LaunchRequestHandler() { }
 
-#warning APL embedded video player should be implemented
 
-        public async Task<SkillResponse> HandleRequest(LaunchRequest request, ILambdaLogger logger)
+        // Request handler
+        public async Task<SkillResponse> HandleRequest(LaunchRequest request, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Launch request handling started");
 
-            var output = new SsmlOutputSpeech()
+            // Get session display value
+            bool? hasDisplay = session.Attributes["has_display"] as bool?;
+
+            // If the device has display
+            if (hasDisplay == true)
             {
-                Ssml = "<speak>" +
-                            "<amazon:effect name='whispered'>" +
-                                 "<prosody rate='slow'>" +
-                                      "<p>Hey,</p>" +
-                                      "<p>it's me.</p>" +
-                                      "<p>ASMR Darling.</p>" +
-                                      "<p>To begin,</p>" +
-                                      "<p>you can say things like,</p>" +
-                                      "<p>play 10 triggers to help you sleep,</p>" +
-                                      "<p>or just say play 10 triggers.</p>" +
-                                 "</prosody>" +
-                            "</amazon:effect>" +
-                       "</speak>"
-            };
-
-
-            // image arrays?
-
-            // var directive = new RenderDocumentDirective
-            // {
-            //     Token = "randomToken",
-            //     Document = new APLDocument
-            //     {
-            //         MainTemplate = new Layout(new[]
-            //{
-            //             new Container(new APLComponent[]{
-            //                 new Text("APL in C#"){FontSize = "24dp",TextAlign= "Center"},
-            //                 new Image("https://images.example.com/photos/2143/lights-party-dancing-music.jpg?cs=srgb&dl=cheerful-club-concert-2143.jpg&fm=jpg"){Width = 400,Height=400}
-            //             }){Direction = "row"}
-            //         })
-            //     }
-            // };
-
-            //var sentences = "Hello World!";
-            //var mainLayout = new Layout(
-            //    new Container(
-            //        new ScrollView(
-            //            new Text(sentences)
-            //            {
-            //                FontSize = "60dp",
-            //                TextAlign = "Center",
-            //                Id = "talker"
-            //            }
-            //            )
-            //        { Width = "50vw", Height = "100vw" }
-            //            ));
-
-
-
-            var mainLayout = new Layout(
-                                 new[] {
-                                     new Container (
-                                         new Sequence(
-                                                 new APLComponent[] {
-                                                     new Text("Video List") { FontSize = "24dp", TextAlign = "Center" },
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png") { Width = 200 , Height = 200},
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = 200, Height = 200},
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png") { Width = 200, Height = 200},
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png") { Width = 200 , Height = 200},
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = 200 , Height = 200},
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = 200,Height = 200 },
-                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = 200, Height = 200 }
-
-                                                 }
-                                                 ){Height="100vh",Numbered=true,  AlignSelf="end"}
-
-                                     ){}
-                                 }
-                  );
-
-
-
-            //var shape = input.Context.Viewport?.Shape;
-            //var response = ResponseBuilder.Tell($"Your viewport is {shape.ToString() ?? "Non existent"}");
-
-            var response = ResponseBuilder.Tell(output);
-            var renderDocument = new RenderDocumentDirective
-            {
-                Token = "randomToken",
-                Document = new APLDocument
+                // SSML speech to return
+                var output = new SsmlOutputSpeech()
                 {
-                    MainTemplate = mainLayout
-                }
-            };
+                    Ssml = "<speak>" +
+                                "<amazon:effect name='whispered'>" +
+                                     "<prosody rate='slow'>" +
+                                          "<p>Hey,</p>" +
+                                          "<p>it's me.</p>" +
+                                          "<p>ASMR Darling.</p>" +
+                                          "<p>To play a clip,</p>" +
+                                          "<p>you can tap any of the thumbnails on the right.</p>" +
+                                          "<p>Enjoy.</p>" +
+                                     "</prosody>" +
+                                "</amazon:effect>" +
+                           "</speak>"
+                };
 
-            response.Response.Directives.Add(renderDocument);
-            return response;
+                // APL display to return
+                var mainLayout =
+                        new Layout(
+                            new[] {
+                                new Container (
+                                    new Video(
+                                    ){}, // End of Video
+                                    new Sequence(
+                                        new APLComponent[] {
+                                            // List of thumbnails
+                                            new Text("Video List") {FontSize = "24dp", TextAlign = "center"},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png") {Width = 200, Height = 200},
+                                            new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png") {Width = 200, Height = 200},
+                                        } // End of APLComponent
+                                    ){Height = "100vh", AlignSelf = "end", PaddingRight = "20px"} // End of Sequence
+                                ){Direction = "row"} // End of Container
+                            } // End of array
+                        ); // End of Layout
 
+                // Make a rendering response
+                var renderDocument = new RenderDocumentDirective
+                {
+                    Token = "randomToken",
+                    Document = new APLDocument { MainTemplate = mainLayout }
+                };
 
-            //return ResponseBuilder.Ask(output, null);
+                // Build a response to combine both speech & APL responses
+                var response = ResponseBuilder.Tell(output);
+                response.Response.Directives.Add(renderDocument);
+
+                return response;
+            }
+
+            // If display is not available
+            else
+            {
+                var output = new SsmlOutputSpeech()
+                {
+                    Ssml = "<speak>" +
+                                "<amazon:effect name='whispered'>" +
+                                     "<prosody rate='slow'>" +
+                                          "<p>Hey,</p>" +
+                                          "<p>it's me.</p>" +
+                                          "<p>ASMR Darling.</p>" +
+                                          "<p>To begin,</p>" +
+                                          "<p>you can say things like,</p>" +
+                                          "<p>play 10 triggers to help you sleep,</p>" +
+                                          "<p>or just say play 10 triggers.</p>" +
+                                     "</prosody>" +
+                                "</amazon:effect>" +
+                           "</speak>"
+                };
+
+                // Return speech response only
+                return ResponseBuilder.Ask(output, null);
+            }
         }
 
 
@@ -122,7 +118,7 @@ namespace ASMRDarling.API.Handlers
         }
 
 
-        public async Task<SkillResponse> HandleRequest(AudioPlayerRequest request, ILambdaLogger logger)
+        public async Task<SkillResponse> HandleRequest(AudioPlayerRequest request, Session session, ILambdaLogger logger)
         {
             throw new NotImplementedException();
         }

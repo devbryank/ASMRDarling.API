@@ -26,7 +26,6 @@ namespace ASMRDarling.API.Handlers
             Intent intent = request.Intent;
             SkillResponse response = new SkillResponse();
 
-#warning built in intent handler should be implemented
             switch (intent.Name)
             {
                 case MEDIA_INTENT_NAME:
@@ -53,13 +52,13 @@ namespace ASMRDarling.API.Handlers
         }
 
 
-        public Task<SkillResponse> HandleRequest(LaunchRequest request, ILambdaLogger logger)
+        public Task<SkillResponse> HandleRequest(LaunchRequest request, Session session, ILambdaLogger logger)
         {
             throw new System.NotImplementedException();
         }
 
 
-        public Task<SkillResponse> HandleRequest(AudioPlayerRequest request, ILambdaLogger logger)
+        public Task<SkillResponse> HandleRequest(AudioPlayerRequest request, Session session, ILambdaLogger logger)
         {
             throw new System.NotImplementedException();
         }

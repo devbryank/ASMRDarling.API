@@ -8,8 +8,8 @@ namespace ASMRDarling.API.Interfaces
 {
     public interface IRequestHandler
     {
-        Task<SkillResponse> HandleRequest(LaunchRequest request, ILambdaLogger logger);
+        Task<SkillResponse> HandleRequest(LaunchRequest request, Session session, ILambdaLogger logger);
         Task<SkillResponse> HandleRequest(IntentRequest request, Session session, ILambdaLogger logger);
-        Task<SkillResponse> HandleRequest(AudioPlayerRequest request, ILambdaLogger logger);
+        Task<SkillResponse> HandleRequest(AudioPlayerRequest request, Session session, ILambdaLogger logger);
     }
 }
