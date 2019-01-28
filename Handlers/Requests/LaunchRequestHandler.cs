@@ -48,14 +48,24 @@ namespace ASMRDarling.API.Handlers
                            "</speak>"
                 };
 
-                var style = new Style();
-                IList<StyleValue> styleList = new List<StyleValue>();
-                IDictionary<string, string> dict = new Dictionary<string, string>
-                {
-                    { "backgroundColor", "white" }
+                Style style = new Style();
+                StyleValue styleValue = new StyleValue();
+                styleValue.Properties = new Dictionary<string, object>();
+                styleValue.Properties.Add("backgroundColor", "white");
+                styleValue.Properties.Add("color", "red");
+
+                style.Values = new List<StyleValue>() {
+
+                    styleValue
+
                 };
-                styleList.Add(new StyleValue(dict));
-                style.Values = styleList;
+                //IList<StyleValue> styleList = new List<StyleValue>();
+                //IDictionary<string, string> dict = new Dictionary<string, string>
+                //{
+                //    { "backgroundColor", "white" }
+                //};
+                //styleList.Add(new StyleValue(dict));
+                //style.Values = styleList;
 
                 List<VideoSource> videoList = new List<VideoSource> {
                     new VideoSource("https://s3.amazonaws.com/asmr-darling-api-media/mp4/100triggerstohelpyousleep.mp4")
@@ -90,7 +100,7 @@ namespace ASMRDarling.API.Handlers
                                             new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png") {Width = 200, Height = 150},
                                         } // End of APLComponent
                                     ) {Width = "20%", Height = "100vh", AlignSelf = "end", Style=style} // End of Sequence
-                                ) {Direction = "row", Style = style} // End of Container
+                                ) {Direction = "row", Style=style} // End of Container
                             } // End of array
                         ); // End of Layout
 
@@ -98,7 +108,9 @@ namespace ASMRDarling.API.Handlers
                 var renderDocument = new RenderDocumentDirective
                 {
                     Token = "randomToken",
-                    Document = new APLDocument { MainTemplate = mainLayout }
+                    Document = new APLDocument { MainTemplate = mainLayout, Styles = new Dictionary<string, Style>() {
+                        { "baseText", style}
+                    } }
                 };
 
                 // Build a response to combine both speech & APL responses
