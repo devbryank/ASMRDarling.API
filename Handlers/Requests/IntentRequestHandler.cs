@@ -13,13 +13,17 @@ namespace ASMRDarling.API.Handlers
     {
         const string ListIntentName = "ListMedia";
         const string PlayIntentName = "PlayMedia";
-        const string BuiltInIntentName = "BuiltInIntent";
+        const string BuiltInIntentName = "AMAZON";
 
         IPlayMediaIntentHandler _playMediaIntentHandler;
         IBuiltInIntentHandler _builtInIntentHandler;
 
 
-        public IntentRequestHandler() { _playMediaIntentHandler = new PlayMediaIntentHandler(); }
+        public IntentRequestHandler()
+        {
+            _playMediaIntentHandler = new PlayMediaIntentHandler();
+            _builtInIntentHandler = new BuiltInIntentHandler();
+        }
 
 
         public async Task<SkillResponse> HandleRequest(IntentRequest request, Session session, ILambdaLogger logger)

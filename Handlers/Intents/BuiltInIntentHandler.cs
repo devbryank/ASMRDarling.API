@@ -10,15 +10,17 @@ namespace ASMRDarling.API.Handlers
 {
     class BuiltInIntentHandler : IBuiltInIntentHandler
     {
-        const string HelpSuffix = "Help";
-        const string CalcelSuffix = "Cancel";
-        const string NextSuffix = "Next";
-        const string PreviousSuffix = "Previous";
-        const string RepeatSuffix = "Repeat";
-        const string ResumeSuffix = "Resume";
-        const string PauseSuffix = "Pause";
-        const string StartOverSuffix = "StartOver";
-        const string StopSuffix = "Stop";
+        //const string FallbackSuffix = "FallbackIntent";
+        const string HelpSuffix = "HelpIntent";
+        //const string CalcelSuffix = "CancelIntent";
+        const string NextSuffix = "NextIntent";
+        const string PreviousSuffix = "PreviousIntent";
+        //const string RepeatSuffix = "Repeat";
+        const string ResumeSuffix = "ResumeIntent";
+        const string PauseSuffix = "PauseIntent";
+        //const string StartOverSuffix = "StartOver";
+        const string StopSuffix = "StopIntent";
+
 
         public BuiltInIntentHandler() { }
 
@@ -31,7 +33,8 @@ namespace ASMRDarling.API.Handlers
             SkillResponse response = new SkillResponse();
             SsmlOutputSpeech output = new SsmlOutputSpeech();
 
-            switch (suffix) {
+            switch (suffix)
+            {
                 case HelpSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
 
@@ -39,16 +42,23 @@ namespace ASMRDarling.API.Handlers
                     response = ResponseBuilder.Ask(output, null);
                     break;
 
-                case CalcelSuffix:
+                //case CalcelSuffix:
+                //    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
+
+                //    response = ResponseBuilder.AudioPlayerStop();
+                //    break;
+
+                case StopSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
 
                     response = ResponseBuilder.AudioPlayerStop();
                     break;
 
-                case NextSuffix:
-                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
+                default:
+                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of unassigned (default)");
 
-                    response = ResponseBuilder.AudioPlayerStop();
+                    output = SsmlBuilder.BuildSpeech("<speak><amazon:effect name='whispered'><prosody rate='slow'>While a media is in play, you can say help, next, previous, resume, pause, stop to control it.</prosody></amazon:effect></speak>");
+                    response = ResponseBuilder.Tell(output, null);
                     break;
             }
 
