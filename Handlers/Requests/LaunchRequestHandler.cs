@@ -121,6 +121,7 @@ namespace ASMRDarling.API.Handlers
 
                 var output = SsmlBuilder.LaunchSpeech(hasDisplay);
 
+                // When unrecognizable speech request is given, fires an error*
                 // Return speech response only
                 return ResponseBuilder.Ask(output, null);
             }

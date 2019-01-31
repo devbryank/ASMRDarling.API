@@ -13,7 +13,7 @@ namespace ASMRDarling.API.Handlers
         //const string FallbackSuffix = "FallbackIntent";
         const string HelpSuffix = "HelpIntent";
         //const string CalcelSuffix = "CancelIntent";
-        const string NextSuffix = "NextIntent";
+        const string NextSuffix = "NextIntent";  // context audio player token has the current clip name save into the session on function
         const string PreviousSuffix = "PreviousIntent";
         //const string RepeatSuffix = "Repeat";
         const string ResumeSuffix = "ResumeIntent";
@@ -48,7 +48,7 @@ namespace ASMRDarling.API.Handlers
                 //    response = ResponseBuilder.AudioPlayerStop();
                 //    break;
 
-                case StopSuffix:
+                case PauseSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
 
                     response = ResponseBuilder.AudioPlayerStop();

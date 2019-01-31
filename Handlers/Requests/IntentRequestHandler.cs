@@ -15,8 +15,17 @@ namespace ASMRDarling.API.Handlers
         const string PlayIntentName = "PlayMedia";
         const string BuiltInIntentName = "AMAZON";
 
+        // update new list media intent to give the list of clips to users
+
+
         IPlayMediaIntentHandler _playMediaIntentHandler;
         IBuiltInIntentHandler _builtInIntentHandler;
+
+        //AudioPlayer.ClearQueue
+        //AudioPlayer.PlaybackStarted   say playing filename
+        //AudioPlayer.PlaybackStopped  say play paused
+        //AudioPlayer.PlaybackFinished
+        //AudioPlayer.PlaybackFailed   should add a fallback?
 
 
         public IntentRequestHandler()

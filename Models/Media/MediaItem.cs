@@ -1,4 +1,4 @@
-﻿namespace ASMRDarling.API.Models.Media
+﻿namespace ASMRDarling.API.Models
 {
     public class MediaItem
     {

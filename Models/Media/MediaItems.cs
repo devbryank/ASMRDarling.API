@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ASMRDarling.API.Models.Media
+namespace ASMRDarling.API.Models
 {
     public class MediaItems
     {
