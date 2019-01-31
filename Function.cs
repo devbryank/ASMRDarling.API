@@ -14,7 +14,7 @@ namespace ASMRDarling.API
 {
     public class Function
     {
-        public const string INVOCATION_NAME = "Darling's Gift";
+        public const string InvocationName = "Darling's Gift";
 
         ILaunchRequestHandler _launchRequestHandler = new LaunchRequestHandler();
         IIntentRequestHandler _intentRequestHandler = new IntentRequestHandler();
@@ -24,7 +24,7 @@ namespace ASMRDarling.API
         {
             // Start logging
             var logger = context.Logger;
-            logger.LogLine($"[Function.FunctionHandler()] {INVOCATION_NAME} launched");
+            logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
 
             // Check if the device has a display interface
             bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
