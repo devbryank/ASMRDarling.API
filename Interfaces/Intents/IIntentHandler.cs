@@ -7,6 +7,6 @@ namespace ASMRDarling.API.Interfaces
 {
     public interface IIntentHandler
     {
-        Task<SkillResponse> HandleIntent(Intent input, Session session, ILambdaLogger logger);
+        Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger);
     }
 }

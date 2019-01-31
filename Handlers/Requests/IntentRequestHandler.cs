@@ -4,15 +4,19 @@ using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
+using ASMRDarling.API.Builders;
 using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {
     class IntentRequestHandler : IIntentRequestHandler
     {
-        const string MEDIA_INTENT_NAME = "PlayMedia";
+        const string ListIntentName = "ListMedia";
+        const string PlayIntentName = "PlayMedia";
+        const string BuiltInIntentName = "BuiltInIntent";
 
         IPlayMediaIntentHandler _playMediaIntentHandler;
+        IBuiltInIntentHandler _builtInIntentHandler;
 
 
         public IntentRequestHandler() { _playMediaIntentHandler = new PlayMediaIntentHandler(); }
@@ -25,26 +29,37 @@ namespace ASMRDarling.API.Handlers
 
             Intent intent = request.Intent;
             SkillResponse response = new SkillResponse();
+            SsmlOutputSpeech output = new SsmlOutputSpeech();
 
             switch (intent.Name)
             {
-                case MEDIA_INTENT_NAME:
+                case ListIntentName:
+                    logger.LogLine($"[IntentRequestHandler.HandleRequest()] {ListIntentName} processing started");
+
+                    break;
+
+                case PlayIntentName:
+                    logger.LogLine($"[IntentRequestHandler.HandleRequest()] {PlayIntentName} processing started");
+
                     response = await _playMediaIntentHandler.HandleIntent(intent, session, logger);
                     break;
 
                 default:
-                    var output = new SsmlOutputSpeech()
-                    {
-                        Ssml = "<speak>" +
-                                    "<amazon:effect name='whispered'>" +
-                                         "<prosody rate='slow'>" +
-                                              "Sorry, I didn't get your intention, can you please tell me one more time?." +
-                                         "</prosody>" +
-                                    "</amazon:effect>" +
-                               "</speak>"
-                    };
+                    var intentNamePartials = intent.Name.Split('.');
 
-                    response = ResponseBuilder.Ask(output, null);
+                    if (intentNamePartials[0].Equals(BuiltInIntentName))
+                    {
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] {BuiltInIntentName} processing started");
+
+                        response = await _builtInIntentHandler.HandleIntent(intent, session, logger);
+                    }
+                    else
+                    {
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent was not recognized");
+                        output = SsmlBuilder.ExceptionSpeech();
+                        response = ResponseBuilder.Ask(output, null);
+                    }
+
                     break;
             }
 
