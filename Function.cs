@@ -32,6 +32,7 @@ namespace ASMRDarling.API
         readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
 
+        // Function handler
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             // Start logging
@@ -100,7 +101,7 @@ namespace ASMRDarling.API
 
                 // Default fallback case
                 default:
-                    logger.LogLine($"[Function.FunctionHandler()] Directing request into the default case");
+                    logger.LogLine($"[Function.FunctionHandler()] Request was not supported, directing request into the default case");
                     var output = SsmlTemplate.ExceptionSpeech();
                     response = ResponseBuilder.Tell(output);
                     break;

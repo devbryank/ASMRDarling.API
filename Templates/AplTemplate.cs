@@ -10,10 +10,9 @@ namespace ASMRDarling.API.Templates
 {
     public class AplTemplate
     {
+        // Menu display layout
         public static async Task<SkillResponse> MenuDisplay(SkillResponse response)
         {
-            // Menu display layout
-#warning add labels below each clips & add logging
             var mainLayout = new Layout(new[] {
                                 new Container(
                                     new Sequence(
@@ -99,16 +98,14 @@ namespace ASMRDarling.API.Templates
                                 ) { Direction = "row" } // End of Container
                             }); // End of Layout
 
-
-            //// Make a rendering response
+            // Make a rendering response
             var renderDocument = new RenderDocumentDirective
             {
                 Token = "APLMenuDisplay",
                 Document = new APLDocument { MainTemplate = mainLayout }
             };
 
-
-            // Merge APL directives then return
+            // Merge APL directives to the response
             response.Response.Directives.Add(renderDocument);
             return response;
         }

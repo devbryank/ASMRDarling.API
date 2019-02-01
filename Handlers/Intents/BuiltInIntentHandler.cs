@@ -50,13 +50,11 @@ namespace ASMRDarling.API.Handlers
 
                 case PauseSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of {suffix}");
-
                     response = ResponseBuilder.AudioPlayerStop();
                     break;
 
                 default:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a response for {intent.Name}, type of unassigned (default)");
-
                     output = SsmlBuilder.BuildSpeech("<speak><amazon:effect name='whispered'><prosody rate='slow'>While a media is in play, you can say help, next, previous, resume, pause, stop to control it.</prosody></amazon:effect></speak>");
                     response = ResponseBuilder.Tell(output, null);
                     break;

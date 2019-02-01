@@ -24,7 +24,7 @@ namespace ASMRDarling.API.Templates
                                             "</speak>";
 
 
-
+        // Return launch request speech
         public static SsmlOutputSpeech LaunchSpeech(bool? hasDisplay)
         {
             if (hasDisplay == true)
@@ -34,10 +34,10 @@ namespace ASMRDarling.API.Templates
         }
 
 
+        // Return when exceptions caught
         public static SsmlOutputSpeech ExceptionSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = ExceptionAudioSpeech };
         }
-
     }
 }

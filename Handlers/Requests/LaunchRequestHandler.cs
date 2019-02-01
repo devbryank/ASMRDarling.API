@@ -1,9 +1,9 @@
-﻿using Alexa.NET;
+﻿using Amazon.Lambda.Core;
+using System.Threading.Tasks;
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-using Amazon.Lambda.Core;
-using System.Threading.Tasks;
 using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
@@ -13,6 +13,7 @@ namespace ASMRDarling.API.Handlers
     {
         // Constructor
         public LaunchRequestHandler() { }
+
 
         // Request handler
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)

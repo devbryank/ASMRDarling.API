@@ -7,6 +7,6 @@ namespace ASMRDarling.API.Interfaces
 {
     interface IRequestHandler
     {
-        Task<SkillResponse> HandleRequest(SkillRequest request, Session session, ILambdaLogger logger);
+        Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger);
     }
 }

@@ -1,20 +1,23 @@
-﻿using Alexa.NET.Request;
-using Alexa.NET.Response;
-using Amazon.Lambda.Core;
-using ASMRDarling.API.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Amazon.Lambda.Core;
 using System.Threading.Tasks;
+using Alexa.NET.Request;
+using Alexa.NET.Response;
+using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {
     class AlexaRequestHandler : IAlexaRequestHandler
     {
+        // Constructor
         public AlexaRequestHandler() { }
-        public Task<SkillResponse> HandleRequest(SkillRequest request, Session session, ILambdaLogger logger)
+
+
+        // Request handler
+        public Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
-            throw new NotImplementedException();
+            logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Alexa request handling started");
+
+            return null;
         }
     }
 }
