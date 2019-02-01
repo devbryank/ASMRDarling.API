@@ -1,12 +1,14 @@
+using Newtonsoft.Json;
+using Amazon.Lambda.Core;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.APL;
-using Amazon.Lambda.Core;
 using ASMRDarling.API.Handlers;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -15,13 +17,19 @@ namespace ASMRDarling.API
 {
     public class Function
     {
+        // Request names
         const string InvocationName = "Darling's Gift";
         const string LaunchRequestName = "LaunchRequest";
         const string IntentRequestName = "IntentRequest";
+        const string AlexaRequestName = "Alexa.Presentation.APL.UserEvent";
+        const string SessionEndedRequestName = "SessionEndedRequest";
 
+        // Request handlers
+        readonly UserEventRequestHandler userRequestHandler = new UserEventRequestHandler();
         readonly ILaunchRequestHandler launchRequestHandler = new LaunchRequestHandler();
-
-        UserEventRequestHandler userHandler = new UserEventRequestHandler();
+        readonly IIntentRequestHandler intentRequestHandler = new IntentRequestHandler();
+        readonly IAlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
+        readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
@@ -31,20 +39,16 @@ namespace ASMRDarling.API
             logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
             logger.LogLine($"[Function.FunctionHandler()] Input details: {JsonConvert.SerializeObject(input)}");
 
-
             // Adding user event request handler
-            userHandler.AddToRequestConverter();
-
+            userRequestHandler.AddToRequestConverter();
 
             // Get request type
             string requestType = input.Request.Type;
             logger.LogLine($"[Function.FunctionHandler()] Request type: {requestType}");
 
-
             // Check if the device has a display interface
             bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
             logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
-
 
             // Store session state
             Session session = input.Session;
@@ -60,15 +64,13 @@ namespace ASMRDarling.API
                 var argument = userEvent.Arguments[0];
                 session.Attributes["argument"] = argument;
             }
- 
-            logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
+            logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
             // Declare response to return
             SkillResponse response = new SkillResponse();
 
-
-            // Direct request into a matching handler
+            // Direct request into the matching handler
             switch (requestType)
             {
                 // Handle launch request
@@ -77,38 +79,35 @@ namespace ASMRDarling.API
                     response = await launchRequestHandler.HandleRequest(input, session, logger);
                     break;
 
-
-
-
-
-
-
-
-
-
-
-
                 // Handle intent request
                 case IntentRequestName:
                     var intentRequest = input.Request as IntentRequest;
-                    logger.LogLine($"[Function.FunctionHandler()] Case: {IntentRequestName} processing started");
-                    response = await _intentRequestHandler.HandleRequest(intentRequest, session, logger);
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {IntentRequestName} handler");
+                    response = await intentRequestHandler.HandleRequest(input, session, logger);
                     break;
 
+                // Handle alexa request
+                case AlexaRequestName:
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaRequestName} handler");
+                    response = await alexaRequestHandler.HandleRequest(input, session, logger);
+                    break;
 
+                // Handle session ended request
+                case SessionEndedRequestName:
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {SessionEndedRequestName} handler");
+                    response = await sessionEndedRequestHandler.HandleRequest(input, session, logger);
+                    break;
 
-
-
-
-
-                case "Alexa.Presentation.APL.UserEvent":
-                    logger.LogLine($"[Function.FunctionHandler()] User event request processing started");
-
+                // Default fallback case
+                default:
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into the default case");
+                    var output = SsmlTemplate.ExceptionSpeech();
+                    response = ResponseBuilder.Tell(output);
                     break;
             }
 
-            // Log response details then return
-            logger.LogLine($"[Function.FunctionHandler()] Response from the API: {JsonConvert.SerializeObject(response.Response)}");
+            // Log response details
+            logger.LogLine($"[Function.FunctionHandler()] Response details: {JsonConvert.SerializeObject(response.Response)}");
 
             return response;
         }

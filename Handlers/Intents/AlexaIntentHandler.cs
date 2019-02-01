@@ -31,7 +31,7 @@ namespace ASMRDarling.API.Handlers
 
                     //output = SsmlBuilder.HelpSpeech();
                     var argument = session.Attributes["arguments"] as string;
-                    response = await LaunchRequestHandler.GetAplVideo(argument);
+                    //response = await LaunchRequestHandler.GetAplVideo(argument);
                     break;
             }
 

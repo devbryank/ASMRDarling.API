@@ -101,5 +101,10 @@ namespace ASMRDarling.API.Handlers
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<SkillResponse> HandleRequest(SkillRequest request, Session session, ILambdaLogger logger)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
