@@ -1,15 +1,14 @@
-﻿using System.Threading.Tasks;
-using Amazon.Lambda.Core;
+﻿// Refactoring Done
+
+using System.Threading.Tasks;
 using Alexa.NET.Request;
-using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
+using Amazon.Lambda.Core;
 
 namespace ASMRDarling.API.Interfaces
 {
     public interface IRequestHandler
     {
-        Task<SkillResponse> HandleRequest(LaunchRequest request, Session session, ILambdaLogger logger);
-        Task<SkillResponse> HandleRequest(IntentRequest request, Session session, ILambdaLogger logger);
-        Task<SkillResponse> HandleRequest(AudioPlayerRequest request, Session session, ILambdaLogger logger);
+        Task<SkillResponse> HandleRequest(SkillRequest request, Session session, ILambdaLogger logger);
     }
 }
