@@ -1,6 +1,4 @@
-﻿// Refactoring Done
-
-namespace ASMRDarling.API.Interfaces
+﻿namespace ASMRDarling.API.Interfaces
 {
-    public interface ILaunchRequestHandler : IRequestHandler { }
+    interface ILaunchRequestHandler : IRequestHandler { }
 }
