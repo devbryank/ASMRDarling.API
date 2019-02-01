@@ -79,12 +79,5 @@ namespace ASMRDarling.API.Handlers
 
             return response;
         }
-
-
-        //AudioPlayer.ClearQueue
-        //AudioPlayer.PlaybackStarted   say playing filename
-        //AudioPlayer.PlaybackStopped  say play paused
-        //AudioPlayer.PlaybackFinished
-        //AudioPlayer.PlaybackFailed   should add a fallback?
     }
 }
