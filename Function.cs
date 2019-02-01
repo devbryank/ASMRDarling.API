@@ -7,6 +7,7 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using ASMRDarling.API.Handlers;
 using ASMRDarling.API.Interfaces;
+using Alexa.NET.APL;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -18,10 +19,15 @@ namespace ASMRDarling.API
 
         ILaunchRequestHandler _launchRequestHandler = new LaunchRequestHandler();
         IIntentRequestHandler _intentRequestHandler = new IntentRequestHandler();
+        UserEventRequestHandler userHandler = new UserEventRequestHandler();
 
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
+            userHandler.AddToRequestConverter();
+
+
+
             // Start logging
             var logger = context.Logger;
             logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
@@ -42,6 +48,16 @@ namespace ASMRDarling.API
             session.Attributes["has_display"] = hasDisplay;
             logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
+            // get arguments
+
+            if (input.Request is UserEventRequest userEvent)
+            {
+                var token = userEvent.Token;
+                var argument = userEvent.Arguments[0];
+                session.Attributes["arguments"] = argument;
+            }
+
+
             // Declare response to return
             SkillResponse response = new SkillResponse();
 
@@ -60,6 +76,11 @@ namespace ASMRDarling.API
                     var intentRequest = input.Request as IntentRequest;
                     logger.LogLine($"[Function.FunctionHandler()] Intent request processing started");
                     response = await _intentRequestHandler.HandleRequest(intentRequest, session, logger);
+                    break;
+
+                case "UserEventRequest":
+                    logger.LogLine($"[Function.FunctionHandler()] User event request processing started");
+
                     break;
             }
 

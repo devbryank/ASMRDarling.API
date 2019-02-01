@@ -15,11 +15,14 @@ namespace ASMRDarling.API.Handlers
         const string PlayIntentName = "PlayMedia";
         const string BuiltInIntentName = "AMAZON";
 
+        const string AlexaIntentName = "Alexa";
+
         // update new list media intent to give the list of clips to users
 
 
         IPlayMediaIntentHandler _playMediaIntentHandler;
         IBuiltInIntentHandler _builtInIntentHandler;
+        IAlexaIntentHandler _alexaIntentHandler;
 
         //AudioPlayer.ClearQueue
         //AudioPlayer.PlaybackStarted   say playing filename
@@ -32,6 +35,7 @@ namespace ASMRDarling.API.Handlers
         {
             _playMediaIntentHandler = new PlayMediaIntentHandler();
             _builtInIntentHandler = new BuiltInIntentHandler();
+            _alexaIntentHandler = new AlexaIntentHandler();
         }
 
 
@@ -65,6 +69,13 @@ namespace ASMRDarling.API.Handlers
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] {BuiltInIntentName} processing started");
 
                         response = await _builtInIntentHandler.HandleIntent(intent, session, logger);
+                    }
+                    else if (intentNamePartials[0].Equals(AlexaIntentName))
+                    {
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] {AlexaIntentName} processing started");
+
+                        response = await _alexaIntentHandler.HandleIntent(intent, session, logger);
+
                     }
                     else
                     {

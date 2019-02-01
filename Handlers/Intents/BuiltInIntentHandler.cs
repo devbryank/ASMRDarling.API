@@ -28,7 +28,7 @@ namespace ASMRDarling.API.Handlers
         public async Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
             var intentNamePartials = intent.Name.Split('.');
-            string suffix = intentNamePartials[1];
+            string suffix = intentNamePartials[intentNamePartials.Length - 1];
 
             SkillResponse response = new SkillResponse();
             SsmlOutputSpeech output = new SsmlOutputSpeech();
