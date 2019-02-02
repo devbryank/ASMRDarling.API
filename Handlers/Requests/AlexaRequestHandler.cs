@@ -25,7 +25,7 @@ namespace ASMRDarling.API.Handlers
             logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Alexa request handling started");
 
             // Split request name to get the suffix only
-            var requestNamePartials = input.Request.GetType().Name.Split('.');
+            var requestNamePartials = input.Request.Type.ToString().Split('.');
             string suffix = requestNamePartials[requestNamePartials.Length - 1];
 
             // Declare response to return

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
-using Amazon.Lambda.Core;
+﻿using Amazon.Lambda.Core;
+using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
-using ASMRDarling.API.Builders;
+using Alexa.NET.Response.Directive;
+using ASMRDarling.API.Models;
 using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
@@ -11,7 +12,10 @@ namespace ASMRDarling.API.Handlers
 {
     class BuiltInIntentHandler : IBuiltInIntentHandler
     {
+
 #warning context audio player token has the current clip name save into the session on function 
+#warning make a constant.cs to store alexa related constants
+
         const string HelpSuffix = "HelpIntent";
         const string NextSuffix = "NextIntent";
         const string PreviousSuffix = "PreviousIntent";
@@ -28,6 +32,9 @@ namespace ASMRDarling.API.Handlers
         public async Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Built in intent handling started");
+
+            // Check the display availability
+            bool? hasDisplay = session.Attributes["has_display"] as bool?;
 
             // Split intent name to get the suffix only
             var intentNamePartials = intent.Name.Split('.');
@@ -53,9 +60,37 @@ namespace ASMRDarling.API.Handlers
                 case NextSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {NextSuffix} response, type of {intent.Name}");
 
+                    // Get next media item
+                    string currentClip = session.Attributes["current_clip"] as string;
+                    MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentClip));
+                    MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
+                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current clip title: {currentMediaItem.Title}");
+
                     // Return next response
-                    output = SsmlTemplate.HelpSpeech();
-                    response = ResponseBuilder.Ask(output, null);
+                    if (nextMediaItem != null)
+                    {
+                        // If next media item is available
+                        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next clip title: {nextMediaItem.Title}");
+
+                        if (hasDisplay == true)
+                        {
+                            response = ResponseBuilder.Empty();
+                            response.Response.Directives.Add(new VideoAppDirective(nextMediaItem.VideoSource));
+                        }
+                        else
+                        {
+                            response = ResponseBuilder.Empty();
+                            response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, nextMediaItem.AudioSource, nextMediaItem.FileName);
+                        }
+                    }
+                    else
+                    {
+                        // If next media item is not available
+                        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next clip is not available");
+
+                        output = SsmlTemplate.MediaPlayerNoNextSpeech();
+                        response = ResponseBuilder.Tell(output);
+                    }
                     break;
 
                 // Handle previous intent
@@ -91,9 +126,10 @@ namespace ASMRDarling.API.Handlers
                     //kill the skill
                     break;
 
+                // Handle default case
                 default:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a defailt response, type of {intent.Name}");
-                    output = SsmlTemplate.AudioPlayerSpeech();
+                    output = SsmlTemplate.MediaPlayerControlSpeech();
                     response = ResponseBuilder.Ask(output, null);
                     break;
             }

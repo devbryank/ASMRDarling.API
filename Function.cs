@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Alexa.NET;
 using Alexa.NET.Request;
-using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.APL;
 using ASMRDarling.API.Handlers;
@@ -17,6 +16,11 @@ namespace ASMRDarling.API
 {
     public class Function
     {
+
+#warning intent & request names (constants) can be referred to AlexaConstants (a class contains all of the constants)
+#warning https://github.com/matthiasxc/alexa-audio-tutorial/blob/master/AudioSkillSample/Assets/Constants.cs
+#warning implement try & catch clause to log exceptions
+
         // Request names
         const string InvocationName = "Darling's Gift";
         const string LaunchRequestName = "LaunchRequest";
@@ -58,11 +62,15 @@ namespace ASMRDarling.API
                 session.Attributes = new Dictionary<string, object>();
 
             session.Attributes["has_display"] = hasDisplay;
+            session.Attributes["current_clip"] = input.Context.AudioPlayer.Token;
 
             if (input.Request is UserEventRequest userEvent)
             {
                 var token = userEvent.Token;
                 var argument = userEvent.Arguments[0];
+
+#warning session attribute argument is not used
+
                 session.Attributes["argument"] = argument;
             }
 
@@ -82,7 +90,6 @@ namespace ASMRDarling.API
 
                 // Handle intent request
                 case IntentRequestName:
-                    var intentRequest = input.Request as IntentRequest;
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {IntentRequestName} handler");
                     response = await intentRequestHandler.HandleRequest(input, session, logger);
                     break;

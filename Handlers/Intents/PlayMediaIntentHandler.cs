@@ -26,6 +26,8 @@ namespace ASMRDarling.API.Handlers
         {
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Play media intent handling started");
 
+#warning resolution should support multiple slots
+
             // Get slot values
             Slot slot = intent.Slots[MediaFileSlotName];
             string slotValue = slot.Value;
@@ -40,7 +42,7 @@ namespace ASMRDarling.API.Handlers
             string fileType = hasDisplay == true ? "mp4" : "mp3";
 
             // Convert file name into lower cases without any white spaces
-            var fileName = Regex.Replace(container[0].Value.Name, @"\s", "");
+            var fileName = Regex.Replace(container[0].Value.Name, @"\s", "").ToLower();
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file requested: {fileName}.{fileType}");
 
             // Get file source url
@@ -54,6 +56,8 @@ namespace ASMRDarling.API.Handlers
             {
                 // If the device has display
                 logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a video app response");
+
+#warning video app or apl video? which one is better?
 
                 // Return video app response
                 response = ResponseBuilder.Empty();

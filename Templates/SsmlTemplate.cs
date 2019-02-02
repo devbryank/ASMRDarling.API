@@ -32,10 +32,15 @@ namespace ASMRDarling.API.Templates
                                             "<p>Close up personal attention for you to sleep.</p>" +
                                        "</speak>";
 
-        const string AudioPlayerDefaultSpeech = "<speak>" +
+        const string MediaPlayerDefaultSpeech = "<speak>" +
                                                      "<p>While a media is in play,</p>" +
                                                      "<p>you can say help, next, previous, resume, pause, stop to control.</p>" +
                                                 "</speak>";
+
+        const string MediaPlayerNoNextAudioSpeech = "<speak>" +
+                                                         "<p>Next clip is not available.</p>" +
+                                                         "<p>Please choose other options.</p>" +
+                                                    "</speak>";
 
         const string ExceptionAudioSpeech = "<speak>" +
                                                  "<p>Sorry, I didn't get your intention.</p>" +
@@ -60,10 +65,17 @@ namespace ASMRDarling.API.Templates
         }
 
 
-        // Return audio player default request speech
-        public static SsmlOutputSpeech AudioPlayerSpeech()
+        // Return media player default request speech
+        public static SsmlOutputSpeech MediaPlayerControlSpeech()
         {
-            return new SsmlOutputSpeech() { Ssml = AudioPlayerDefaultSpeech };
+            return new SsmlOutputSpeech() { Ssml = MediaPlayerDefaultSpeech };
+        }
+
+
+        // Return no next media item intent speech
+        public static SsmlOutputSpeech MediaPlayerNoNextSpeech()
+        {
+            return new SsmlOutputSpeech() { Ssml = MediaPlayerNoNextAudioSpeech };
         }
 
 

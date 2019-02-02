@@ -60,19 +60,22 @@ namespace ASMRDarling.API.Handlers
 
                     if (intentNamePartials[0].Equals(BuiltInIntentName))
                     {
+                        // Handle built in intent
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {BuiltInIntentName} handler");
                         response = await builtInIntentHandler.HandleIntent(intent, session, logger);
                     }
                     else if (intentNamePartials[0].Equals(AudioPlayerIntentName))
                     {
+                        // Handle audio player intent
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AudioPlayerIntentName} handler");
                         response = await audioPlayerIntentHandler.HandleIntent(intent, session, logger);
                     }
                     else
                     {
+                        // Handle default case, without any recognizable intent
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent was not recognized, directing intent into the default case");
                         output = SsmlTemplate.ExceptionSpeech();
-                        response = ResponseBuilder.Ask(output, null);
+                        response = ResponseBuilder.Tell(output);
                     }
                     break;
             }
