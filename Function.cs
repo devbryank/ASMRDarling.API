@@ -103,7 +103,7 @@ namespace ASMRDarling.API
                 default:
                     logger.LogLine($"[Function.FunctionHandler()] Request was not supported, directing request into the default case");
                     var output = SsmlTemplate.ExceptionSpeech();
-                    response = ResponseBuilder.Tell(output);
+                    response = ResponseBuilder.Ask(output, null);
                     break;
             }
 

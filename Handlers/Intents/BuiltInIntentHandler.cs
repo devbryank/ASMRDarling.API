@@ -94,7 +94,7 @@ namespace ASMRDarling.API.Handlers
                 default:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a defailt response, type of {intent.Name}");
                     output = SsmlTemplate.AudioPlayerSpeech();
-                    response = ResponseBuilder.Tell(output, null);
+                    response = ResponseBuilder.Ask(output, null);
                     break;
             }
 

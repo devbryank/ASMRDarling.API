@@ -32,7 +32,10 @@ namespace ASMRDarling.API.Templates
                                             "<p>Close up personal attention for you to sleep.</p>" +
                                        "</speak>";
 
-        const string AudioPlayerDefaultSpeech = "<speak><amazon:effect name='whispered'><prosody rate='slow'>While a media is in play, you can say help, next, previous, resume, pause, stop to control it.</prosody></amazon:effect></speak>";
+        const string AudioPlayerDefaultSpeech = "<speak>" +
+                                                     "<p>While a media is in play,</p>" +
+                                                     "<p>you can say help, next, previous, resume, pause, stop to control.</p>" +
+                                                "</speak>";
 
         const string ExceptionAudioSpeech = "<speak>" +
                                                  "<p>Sorry, I didn't get your intention.</p>" +
