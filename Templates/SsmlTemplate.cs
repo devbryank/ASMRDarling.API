@@ -42,6 +42,11 @@ namespace ASMRDarling.API.Templates
                                                          "<p>Please choose other options.</p>" +
                                                     "</speak>";
 
+        const string MediaPlayerNoPreviousAudioSpeech = "<speak>" +
+                                                             "<p>Previous clip is not available.</p>" +
+                                                             "<p>Please choose other options.</p>" +
+                                                        "</speak>";
+
         const string ExceptionAudioSpeech = "<speak>" +
                                                  "<p>Sorry, I didn't get your intention.</p>" +
                                                  "<p>Please try again, or say help to hear about other options.</p>" +
@@ -69,6 +74,13 @@ namespace ASMRDarling.API.Templates
         public static SsmlOutputSpeech MediaPlayerControlSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = MediaPlayerDefaultSpeech };
+        }
+
+
+        // Return no next media item intent speech
+        public static SsmlOutputSpeech MediaPlayerNoPreviousSpeech()
+        {
+            return new SsmlOutputSpeech() { Ssml = MediaPlayerNoPreviousAudioSpeech };
         }
 
 

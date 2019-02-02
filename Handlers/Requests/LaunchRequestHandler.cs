@@ -15,7 +15,7 @@ namespace ASMRDarling.API.Handlers
         public LaunchRequestHandler() { }
 
 
-        // Request handler
+        // Request handler start
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Launch request handling started");
@@ -32,7 +32,7 @@ namespace ASMRDarling.API.Handlers
                 // If the device has display
                 logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial APL response");
 
-                // Return APL response
+                // Get APL response then return
                 var response = ResponseBuilder.Ask(output, null);
                 return await AplTemplate.MenuDisplay(response);
             }

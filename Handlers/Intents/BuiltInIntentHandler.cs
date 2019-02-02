@@ -16,6 +16,7 @@ namespace ASMRDarling.API.Handlers
 #warning context audio player token has the current clip name save into the session on function 
 #warning make a constant.cs to store alexa related constants
 
+        // Intent suffix constants
         const string HelpSuffix = "HelpIntent";
         const string NextSuffix = "NextIntent";
         const string PreviousSuffix = "PreviousIntent";
@@ -28,13 +29,17 @@ namespace ASMRDarling.API.Handlers
         public BuiltInIntentHandler() { }
 
 
-        // Intent handler
+        // Intent handler start
         public async Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Built in intent handling started");
 
             // Check the display availability
             bool? hasDisplay = session.Attributes["has_display"] as bool?;
+
+            // Get the most recently played media item
+            string currentClip = session.Attributes["current_clip"] as string;
+            MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentClip));
 
             // Split intent name to get the suffix only
             var intentNamePartials = intent.Name.Split('.');
@@ -51,7 +56,7 @@ namespace ASMRDarling.API.Handlers
                 case HelpSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {HelpSuffix} response, type of {intent.Name}");
 
-                    // Return help response
+                    // Set help response
                     output = SsmlTemplate.HelpSpeech();
                     response = ResponseBuilder.Ask(output, null);
                     break;
@@ -61,12 +66,10 @@ namespace ASMRDarling.API.Handlers
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {NextSuffix} response, type of {intent.Name}");
 
                     // Get next media item
-                    string currentClip = session.Attributes["current_clip"] as string;
-                    MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentClip));
                     MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current clip title: {currentMediaItem.Title}");
 
-                    // Return next response
+                    // Set next response
                     if (nextMediaItem != null)
                     {
                         // If next media item is available
@@ -97,15 +100,42 @@ namespace ASMRDarling.API.Handlers
                 case PreviousSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {PreviousSuffix} response, type of {intent.Name}");
 
-                    // Return previous response
-                    //response = ResponseBuilder.AudioPlayerStop();
+                    // Get previous media item
+                    MediaItem previousMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id - 1));
+                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current clip title: {currentMediaItem.Title}");
+
+                    // Set previous response
+                    if (previousMediaItem != null)
+                    {
+                        // If previous media item is available
+                        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next clip title: {previousMediaItem.Title}");
+
+                        if (hasDisplay == true)
+                        {
+                            response = ResponseBuilder.Empty();
+                            response.Response.Directives.Add(new VideoAppDirective(previousMediaItem.VideoSource));
+                        }
+                        else
+                        {
+                            response = ResponseBuilder.Empty();
+                            response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
+                        }
+                    }
+                    else
+                    {
+                        // If previous media item is not available
+                        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Previous clip is not available");
+
+                        output = SsmlTemplate.MediaPlayerNoPreviousSpeech();
+                        response = ResponseBuilder.Tell(output);
+                    }
                     break;
 
                 // Handle resume intent
                 case ResumeSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {ResumeSuffix} response, type of {intent.Name}");
 
-                    // Return resume response
+                    // Set resume response
                     //response = ResponseBuilder.AudioPlayerPlay();
                     break;
 
@@ -113,7 +143,7 @@ namespace ASMRDarling.API.Handlers
                 case PauseSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {PauseSuffix} response, type of {intent.Name}");
 
-                    // Return pause response
+                    // Set pause response
                     response = ResponseBuilder.AudioPlayerStop();
                     break;
 
@@ -121,9 +151,8 @@ namespace ASMRDarling.API.Handlers
                 case StopSuffix:
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {StopSuffix} response, type of {intent.Name}");
 
-                    // Return stop response
-                    //response = ResponseBuilder.AudioPlayerStop();
-                    //kill the skill
+                    // Set stop response
+                    response = ResponseBuilder.AudioPlayerStop();
                     break;
 
                 // Handle default case
@@ -134,6 +163,7 @@ namespace ASMRDarling.API.Handlers
                     break;
             }
 
+            // Return response to the intent request handler
             return response;
         }
     }

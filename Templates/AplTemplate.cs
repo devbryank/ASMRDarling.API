@@ -11,10 +11,9 @@ namespace ASMRDarling.API.Templates
     public class AplTemplate
     {
 
-#warning should apl video feature needs to be implemented?
 #warning styles need to be sorted out
 
-        // Menu display layout
+        // Menu display layout generation start
         public static async Task<SkillResponse> MenuDisplay(SkillResponse response)
         {
             var mainLayout = new Layout(new[] {
@@ -98,7 +97,7 @@ namespace ASMRDarling.API.Templates
                                             }
 
                                         } // End of APLComponent
-                                    ) { Width = "40%", Height = "100vh" } // End of Sequence
+                                    ) { Width = "100vw", Height = "100vh" } // End of Sequence
                                 ) { Direction = "row" } // End of Container
                             }); // End of Layout
 
@@ -109,7 +108,33 @@ namespace ASMRDarling.API.Templates
                 Document = new APLDocument { MainTemplate = mainLayout }
             };
 
-            // Merge APL directives to the response
+            // Merge APL directives to the response then return to the play media intent handler
+            response.Response.Directives.Add(renderDocument);
+            return response;
+        }
+
+
+        // Video player layout generation start
+        public static async Task<SkillResponse> VideoPlayer(SkillResponse response, string source)
+        {
+            // Set video source
+            List<VideoSource> videoList = new List<VideoSource> { new VideoSource(source) };
+
+            var mainLayout = new Layout(new[] {
+                                new Container(
+                                    new Video(
+                                    ) { Width = "100vw", Height = "100vh", Autoplay = true, Source = videoList } // End of Video
+                                ) // End of Container
+                            }); // End of Layout
+
+            //// Make a rendering response
+            var renderDocument = new RenderDocumentDirective
+            {
+                Token = "APLVideoPlayer",
+                Document = new APLDocument { MainTemplate = mainLayout }
+            };
+
+            // Merge APL directives to the response then return to the play media intent handler
             response.Response.Directives.Add(renderDocument);
             return response;
         }

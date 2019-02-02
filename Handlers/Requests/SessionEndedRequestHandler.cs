@@ -13,7 +13,7 @@ namespace ASMRDarling.API.Handlers
         public SessionEndedRequestHandler() { }
 
 
-        // Request handler
+        // Request handler start
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[SessionEndedRequestHandler.HandleRequest()] Session Ended request handling started");
@@ -24,7 +24,7 @@ namespace ASMRDarling.API.Handlers
 
             logger.LogLine($"[SessionEndedRequestHandler.HandleRequest()] Session Ended.");
 
-            // Return session end response
+            // Return response to the function handler
             return response;
         }
     }

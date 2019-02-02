@@ -6,6 +6,7 @@ using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using ASMRDarling.API.Builders;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
@@ -21,7 +22,7 @@ namespace ASMRDarling.API.Handlers
         public PlayMediaIntentHandler() { }
 
 
-        // Intent handler
+        // Intent handler start
         public async Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Play media intent handling started");
@@ -48,30 +49,35 @@ namespace ASMRDarling.API.Handlers
             // Get file source url
             string url = UrlBuilder.GetS3FileSourceUrl(MediaBaseUrl, fileName, fileType);
             logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file source URL: {url}");
-
+            
             // Declare response to return
             SkillResponse response = new SkillResponse();
 
             if (hasDisplay == true)
             {
                 // If the device has display
-                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a video app response");
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a video app or APL video player response");
 
 #warning video app or apl video? which one is better?
 
-                // Return video app response
+                // Set video app response
+                //response = ResponseBuilder.Empty();
+                //response.Response.Directives.Add(new VideoAppDirective(url));
+
+                // Set apl video player response
                 response = ResponseBuilder.Empty();
-                response.Response.Directives.Add(new VideoAppDirective(url));
+                return await AplTemplate.VideoPlayer(response, url);
             }
             else
             {
                 // If display is not available
                 logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating an audio player response");
 
-                // Return audio only response
+                // Set audio only response
                 response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
             }
 
+            // Return response to the intent request handler
             return response;
         }
     }

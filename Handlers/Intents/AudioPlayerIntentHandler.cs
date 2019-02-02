@@ -12,14 +12,13 @@ namespace ASMRDarling.API.Handlers
         public AudioPlayerIntentHandler() { }
 
 
-        // Intent handler
+        // Intent handler start
         public Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[AudioPlayerIntentHandler.HandleIntent()] Audio player intent handling started");
 
             return null;
         }
-
 
         //AudioPlayer.ClearQueue
         //AudioPlayer.PlaybackStarted   say playing filename

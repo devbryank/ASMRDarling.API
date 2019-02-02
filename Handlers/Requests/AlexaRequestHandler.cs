@@ -1,11 +1,12 @@
 ﻿using Amazon.Lambda.Core;
 using System.Threading.Tasks;
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
+using Alexa.NET.Response.Directive;
 using Alexa.NET.APL;
 using ASMRDarling.API.Interfaces;
-using Alexa.NET;
-using Alexa.NET.Response.Directive;
+using ASMRDarling.API.Templates;
 
 namespace ASMRDarling.API.Handlers
 {
@@ -19,7 +20,7 @@ namespace ASMRDarling.API.Handlers
         public AlexaRequestHandler() { }
 
 
-        // Request handler
+        // Request handler start
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Alexa request handling started");
@@ -36,22 +37,33 @@ namespace ASMRDarling.API.Handlers
             {
                 // Handle user event request
                 case UserEventRequestName:
+
                     // Get user event request
                     logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Directing request into {suffix} handler");
                     UserEventRequest userEventRequest = input.Request as UserEventRequest;
 
                     string url = userEventRequest.Arguments[0] as string;
-                    logger.LogLine($"[AlexaRequestHandler.HandleIntent()] Media file source URL: {url}");
+                    logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Media file source URL: {url}");
+                    logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Generating a video app or APL video player response");
 
-                    // Return video app response
+                    //// Set video app response
+                    //response = ResponseBuilder.Empty();
+                    //response.Response.Directives.Add(new VideoAppDirective(url));
+
+                    // Set apl video player response
                     response = ResponseBuilder.Empty();
-                    response.Response.Directives.Add(new VideoAppDirective(url));
+                    response = await AplTemplate.VideoPlayer(response, url);
                     break;
 
+                // Handle default case
                 default:
+
+#warning not implemented yet
+
                     break;
             }
 
+            // Return response to the function handler
             return response;
         }
     }

@@ -31,7 +31,7 @@ namespace ASMRDarling.API.Handlers
         }
 
 
-        // Request handler
+        // Request handler start
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
             logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent request handling started");
@@ -79,7 +79,8 @@ namespace ASMRDarling.API.Handlers
                     }
                     break;
             }
-
+            
+            // Return response to the function handler
             return response;
         }
     }

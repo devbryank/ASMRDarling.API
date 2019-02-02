@@ -26,17 +26,17 @@ namespace ASMRDarling.API
         const string LaunchRequestName = "LaunchRequest";
         const string IntentRequestName = "IntentRequest";
         const string AlexaRequestName = "Alexa.Presentation.APL.UserEvent";
+        const string ExceptionRequestName = "System.ExceptionEncountered";
         const string SessionEndedRequestName = "SessionEndedRequest";
 
         // Request handlers
-        readonly UserEventRequestHandler userRequestHandler = new UserEventRequestHandler();
         readonly ILaunchRequestHandler launchRequestHandler = new LaunchRequestHandler();
         readonly IIntentRequestHandler intentRequestHandler = new IntentRequestHandler();
         readonly IAlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
         readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
 
-        // Function handler
+        // Function handler start
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             // Start logging
@@ -44,8 +44,8 @@ namespace ASMRDarling.API
             logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
             logger.LogLine($"[Function.FunctionHandler()] Input details: {JsonConvert.SerializeObject(input)}");
 
-            // Adding user event request handler
-            userRequestHandler.AddToRequestConverter();
+            // Adding user event request converter
+            new UserEventRequestHandler().AddToRequestConverter();
 
             // Get request type
             string requestType = input.Request.Type;
@@ -62,7 +62,11 @@ namespace ASMRDarling.API
                 session.Attributes = new Dictionary<string, object>();
 
             session.Attributes["has_display"] = hasDisplay;
-            session.Attributes["current_clip"] = input.Context.AudioPlayer.Token;
+
+            if (input.Context.AudioPlayer.Token != null)
+            {
+                session.Attributes["current_clip"] = input.Context.AudioPlayer.Token;
+            }
 
             if (input.Request is UserEventRequest userEvent)
             {
@@ -97,7 +101,19 @@ namespace ASMRDarling.API
                 // Handle alexa request
                 case AlexaRequestName:
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaRequestName} handler");
+
+#warning apl? or video app directives?
+
                     response = await alexaRequestHandler.HandleRequest(input, session, logger);
+                    break;
+
+                // Handle system exception request
+                case ExceptionRequestName:
+
+#warning not yet implemented
+
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {ExceptionRequestName} handler");
+                    response = ResponseBuilder.Empty();
                     break;
 
                 // Handle session ended request
@@ -114,9 +130,8 @@ namespace ASMRDarling.API
                     break;
             }
 
-            // Log response details
-            logger.LogLine($"[Function.FunctionHandler()] Response details: {JsonConvert.SerializeObject(response.Response)}");
-
+            // Log response details then return
+            logger.LogLine($"[Function.FunctionHandler()] Response details: {JsonConvert.SerializeObject(response)}");
             return response;
         }
     }
