@@ -16,18 +16,40 @@ namespace ASMRDarling.API.Templates
         // Menu display layout generation start
         public static async Task<SkillResponse> MenuDisplay(SkillResponse response)
         {
+
+            Style newStyle = new Style();
+
+            StyleValue colorRed = new StyleValue();
+            colorRed.Properties = new Dictionary<string, object> { { "color", "red" } };
+
+            StyleValue bgRed = new StyleValue();
+            bgRed.Properties = new Dictionary<string, object> { { "backgroundColor", "red" } };
+
+            newStyle.Values = new List<StyleValue>();
+
+            newStyle.Values.Add(colorRed);
+            newStyle.Values.Add(bgRed);
+
+
+            Style redStyle = new Style();
+
+
+
+
+
             var mainLayout = new Layout(new[] {
+                new Frame(
                                 new Container(
                                     new Sequence(
                                         new APLComponent[] {
-                                            
+                                           
                                             // Title
-                                            new Text("ASMR List") { FontSize = "24dp", TextAlign = "center" },
+                                            new Text("ASMR List") { FontSize = "24dp", TextAlign = "center", Style = redStyle },
 
                                             // First clip
                                             new TouchWrapper(
-                                                new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png"),
-                                                new Text(MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).Title) { TextAlign = "center" }) {
+                                                new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = "40vw", Height = "30vh", Position = "center" },
+                                                new Text(MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).Title) { Color = "red", FontSize = "20dp", TextAlign = "center" }) {
                                                 OnPress = new SendEvent {
                                                     Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).VideoSource }
                                                 }
@@ -97,15 +119,20 @@ namespace ASMRDarling.API.Templates
                                             }
 
                                         } // End of APLComponent
-                                    ) { Width = "100vw", Height = "100vh" } // End of Sequence
-                                ) { Direction = "row" } // End of Container
+                                    ) { Width = "100vw", Height = "100vh", AlignSelf = "center", Position = "center" } // End of Sequence
+                                ) { Width = "100vw", Height = "100vh", Direction = "row", JustifyContent = "center" } ){ BackgroundColor = "white"}// End of Container
                             }); // End of Layout
 
             // Make a rendering response
             var renderDocument = new RenderDocumentDirective
             {
                 Token = "APLMenuDisplay",
-                Document = new APLDocument { MainTemplate = mainLayout }
+                Document = new APLDocument
+                {
+                    Styles = new Dictionary<string, Style> { { "newStyle", newStyle } },
+
+                    MainTemplate = mainLayout
+                }
             };
 
             // Merge APL directives to the response then return to the play media intent handler
