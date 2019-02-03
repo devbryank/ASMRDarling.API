@@ -1,5 +1,6 @@
-﻿using Amazon.Lambda.Core;
+﻿using System;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
@@ -11,38 +12,47 @@ namespace ASMRDarling.API.Handlers
 {
     class LaunchRequestHandler : ILaunchRequestHandler
     {
-        // Constructor
         public LaunchRequestHandler() { }
 
-
-        // Request handler start
         public async Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
         {
-            logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Launch request handling started");
-
-            // Get launch request
-            LaunchRequest launchRequest = input.Request as LaunchRequest;
-
-            // Get session display value, then make output speech
-            bool? hasDisplay = session.Attributes["has_display"] as bool?;
-            SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
-
-            if (hasDisplay == true)
+            try
             {
-                // If the device has display
-                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial APL response");
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Launch Request handling started");
 
-                // Get APL response then return
-                var response = ResponseBuilder.Ask(output, null);
-                return await AplTemplate.MenuDisplay(response);
+                // get launch request
+                LaunchRequest launchRequest = input.Request as LaunchRequest;
+
+                // get session display value, then make output speech
+                bool? hasDisplay = session.Attributes["has_display"] as bool?;
+                SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
+
+                if (hasDisplay == true)
+                {
+                    // if the device has display
+                    logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial APL response");
+
+                    // get apl response then return
+                    var response = ResponseBuilder.Ask(output, null);
+                    return await AplTemplate.MenuDisplay(response);
+                }
+                else
+                {
+                    // if display is not available
+                    logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial audio only response");
+
+                    // return audio only response
+                    return ResponseBuilder.Ask(output, null);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // If display is not available
-                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial audio only response");
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Exception caught");
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Exception log: {ex}");
 
-                // Return audio only response
-                return ResponseBuilder.Ask(output, null);
+                // return system exception to the function handler
+                var output = SsmlTemplate.SystemFaultSpeech();
+                return ResponseBuilder.Tell(output);
             }
         }
     }

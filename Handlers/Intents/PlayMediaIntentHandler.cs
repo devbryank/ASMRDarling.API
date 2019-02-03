@@ -1,6 +1,7 @@
-﻿using Amazon.Lambda.Core;
+﻿using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Amazon.Lambda.Core;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
@@ -13,72 +14,85 @@ namespace ASMRDarling.API.Handlers
 {
     class PlayMediaIntentHandler : IPlayMediaIntentHandler
     {
-        // Source related constants
+        // source related constants
         public const string MediaFileSlotName = "MediaFileName";
         public const string MediaBaseUrl = "https://s3.amazonaws.com/asmr-darling-api-media";
 
 
-        // Constructor
         public PlayMediaIntentHandler() { }
 
-
-        // Intent handler start
         public async Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
         {
-            logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Play media intent handling started");
+            try
+            {
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Play Media Intent handling started");
 
 #warning resolution should support multiple slots
 
-            // Get slot values
-            Slot slot = intent.Slots[MediaFileSlotName];
-            string slotValue = slot.Value;
-            logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Requested slot value (synonym): {slotValue}");
+                // get slot values
+                Slot slot = intent.Slots[MediaFileSlotName];
+                string slotValue = slot.Value;
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Requested slot value (synonym): {slotValue}");
 
-            // Get resolution, multiple slots in a dialog will cause an exception
-            ResolutionAuthority[] resolution = slot.Resolution.Authorities;
-            ResolutionValueContainer[] container = resolution[0].Values;
+                // get resolution, multiple slots in a dialog will cause an exception
+                ResolutionAuthority[] resolution = slot.Resolution.Authorities;
+                ResolutionValueContainer[] container = resolution[0].Values;
 
-            // Get file extentions based on the display availability
-            bool? hasDisplay = session.Attributes["has_display"] as bool?;
-            string fileType = hasDisplay == true ? "mp4" : "mp3";
+                // get file extentions based on the display availability
+                bool? hasDisplay = session.Attributes["has_display"] as bool?;
+                string fileType = hasDisplay == true ? "mp4" : "mp3";
 
-            // Convert file name into lower cases without any white spaces
-            var fileName = Regex.Replace(container[0].Value.Name, @"\s", "").ToLower();
-            logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file requested: {fileName}.{fileType}");
+                // convert file name into lower cases with no white spaces
+                var fileName = Regex.Replace(container[0].Value.Name, @"\s", "").ToLower();
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file requested: {fileName}.{fileType}");
 
-            // Get file source url
-            string url = UrlBuilder.GetS3FileSourceUrl(MediaBaseUrl, fileName, fileType);
-            logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file source URL: {url}");
-            
-            // Declare response to return
-            SkillResponse response = new SkillResponse();
+                // get file source url
+                string url = UrlBuilder.GetS3FileSourceUrl(MediaBaseUrl, fileName, fileType);
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Media file source URL: {url}");
 
-            if (hasDisplay == true)
-            {
-                // If the device has display
-                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a video app or APL video player response");
+                // declare response to return
+                SkillResponse response = new SkillResponse();
+
+                // send a quick response before loading the content
+                ProgressiveResponse progressiveResponse = session.Attributes["quick_response"] as ProgressiveResponse;
+                await progressiveResponse.SendSpeech($"Playing {container[0].Value.Name}");
+
+                if (hasDisplay == true)
+                {
+                    // if the device has display
+                    logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating a video app or APL video player response");
 
 #warning video app or apl video? which one is better?
 
-                // Set video app response
-                //response = ResponseBuilder.Empty();
-                //response.Response.Directives.Add(new VideoAppDirective(url));
+                    // set video app response
+                    // response = ResponseBuilder.Empty();
+                    // response.Response.Directives.Add(new VideoAppDirective(url));
 
-                // Set apl video player response
-                response = ResponseBuilder.Empty();
-                return await AplTemplate.VideoPlayer(response, url);
+                    // set apl video player response
+                    response = ResponseBuilder.Empty();
+                    return await AplTemplate.VideoPlayer(response, url);
+                }
+                else
+                {
+                    // if display is not available
+                    logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating an audio player response");
+
+                    // set audio only response
+                    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
+                }
+
+                // return response to the intent request handler
+                return response;
             }
-            else
+            catch (Exception ex)
             {
-                // If display is not available
-                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Generating an audio player response");
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Exception caught");
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Exception log: {ex}");
 
-                // Set audio only response
-                response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
+                // return system exception to the intent request handler
+                var output = SsmlTemplate.SystemFaultSpeech();
+                return ResponseBuilder.Tell(output);
             }
-
-            // Return response to the intent request handler
-            return response;
         }
     }
 }

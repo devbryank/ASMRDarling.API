@@ -10,158 +10,178 @@ namespace ASMRDarling.API.Templates
 {
     public class AplTemplate
     {
-
-#warning styles need to be sorted out
-
-        // Menu display layout generation start
+        // menu display layout generation start
         public static async Task<SkillResponse> MenuDisplay(SkillResponse response)
         {
+            string imageWidth = "50vw";
+            string imageHeight = "40vh";
+            string imagePaddingBottom = "5vh";
 
-            Style newStyle = new Style();
-
-            StyleValue colorRed = new StyleValue();
-            colorRed.Properties = new Dictionary<string, object> { { "color", "red" } };
-
-            StyleValue bgRed = new StyleValue();
-            bgRed.Properties = new Dictionary<string, object> { { "backgroundColor", "red" } };
-
-            newStyle.Values = new List<StyleValue>();
-
-            newStyle.Values.Add(colorRed);
-            newStyle.Values.Add(bgRed);
+            string clipNameFontSize = "30dp";
+            string clipNameFontColor = "black";
 
 
-            Style redStyle = new Style();
+            var mainLayout = new Layout(
+                                new Frame(
+                                    new Container(
+                                        new Sequence(
+                                            new APLComponent[] {
+                                                // title
+                                                new Text("ASMR List") { Color = "blue", TextAlign = "center", PaddingBottom = imagePaddingBottom },
+
+                                                // first clip: what is asmr
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(01) {MediaItems.GetMediaItems()[0].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("ASMR")).VideoSource }
+                                                    }
+                                                },
+
+                                                // second clip: 10 triggers to help you sleep
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(02) {MediaItems.GetMediaItems()[1].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).VideoSource }
+                                                    }
+                                                },
+
+                                                // third clip: 20 triggers to help you sleep
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(03) {MediaItems.GetMediaItems()[2].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("20 Triggers")).VideoSource }
+                                                    }
+                                                },
+
+                                                // fourth clip: 100 triggers to help you sleep
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(04) {MediaItems.GetMediaItems()[3].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("100 Triggers")).VideoSource }
+                                                    }
+                                                },
+
+                                                // fifth clip: a to z triggers to help you sleep
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(05) {MediaItems.GetMediaItems()[4].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("A to Z Triggers")).VideoSource }
+                                                    }
+                                                },
+
+                                                // sixth clip: brushing the microphone
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(06) {MediaItems.GetMediaItems()[5].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Brushing")).VideoSource }
+                                                    }
+                                                },
+
+                                                // seventh clip: relaxing head massage
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(07) {MediaItems.GetMediaItems()[6].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Head")).VideoSource }
+                                                    }
+                                                },
+
+                                                // eighth clip: relaxing scalp massage
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(08) {MediaItems.GetMediaItems()[7].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Scalp")).VideoSource }
+                                                    }
+                                                },
+
+                                                // ninth clip: whispered tapping and scratching
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(09) {MediaItems.GetMediaItems()[8].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                ) {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Whispered")).VideoSource }
+                                                    }
+                                                },
+
+                                                // tenth clip: close up personal attention for you to sleep
+                                                new TouchWrapper(
+                                                    new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png") { Width = imageWidth, Height = imageHeight },
+                                                    new Text($"(10) {MediaItems.GetMediaItems()[9].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                )
+                                                {
+                                                    OnPress = new SendEvent {
+                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Personal")).VideoSource }
+                                                    }
+                                                },
+                                            } // end of apl component
+                                        ) { Width = imageWidth, Height = "100vh" } // end of sequence
+                                    ) { Width = "100vw", Height = "100vh", AlignItems = "center", JustifyContent = "center" } // end of container
+                                ) { Width = "100vw", Height = "100vh", BackgroundColor = "white" } // end of frame
+                             ); // end of layout
 
 
-
-
-
-            var mainLayout = new Layout(new[] {
-                new Frame(
-                                new Container(
-                                    new Sequence(
-                                        new APLComponent[] {
-                                           
-                                            // Title
-                                            new Text("ASMR List") { FontSize = "24dp", TextAlign = "center", Style = redStyle },
-
-                                            // First clip
-                                            new TouchWrapper(
-                                                new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png") { Width = "40vw", Height = "30vh", Position = "center" },
-                                                new Text(MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).Title) { Color = "red", FontSize = "20dp", TextAlign = "center" }) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).VideoSource }
-                                                }
-                                            },
-
-                                            // Second clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("20 Triggers")).VideoSource }
-                                                }
-                                            },
-
-                                            // Third clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("100 Triggers")).VideoSource }
-                                                }
-                                            },
-
-                                            // Fourth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("A to Z Triggers")).VideoSource }
-                                                }
-                                            },
-
-                                            // Fifth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Brushing")).VideoSource }
-                                                }
-                                            },
-
-                                            // Sixth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Personal")).VideoSource }
-                                                }
-                                            },
-
-                                            // Seventh clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Head")).VideoSource }
-                                                }
-                                            },
-
-                                            // Eighth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Scalp")).VideoSource }
-                                                }
-                                            },
-
-                                            // Ninth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("ASMR")).VideoSource }
-                                                }
-                                            },
-
-                                            // Tenth clip
-                                            new TouchWrapper(new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png")) {
-                                                OnPress = new SendEvent {
-                                                    Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Whispered")).VideoSource }
-                                                }
-                                            }
-
-                                        } // End of APLComponent
-                                    ) { Width = "100vw", Height = "100vh", AlignSelf = "center", Position = "center" } // End of Sequence
-                                ) { Width = "100vw", Height = "100vh", Direction = "row", JustifyContent = "center" } ){ BackgroundColor = "white"}// End of Container
-                            }); // End of Layout
-
-            // Make a rendering response
+            // make a rendering response
             var renderDocument = new RenderDocumentDirective
             {
                 Token = "APLMenuDisplay",
-                Document = new APLDocument
-                {
-                    Styles = new Dictionary<string, Style> { { "newStyle", newStyle } },
-
-                    MainTemplate = mainLayout
-                }
+                Document = new APLDocument { MainTemplate = mainLayout }
             };
 
-            // Merge APL directives to the response then return to the play media intent handler
+            // merge apl directives to the response then return to the play media intent handler
             response.Response.Directives.Add(renderDocument);
             return response;
         }
 
 
-        // Video player layout generation start
+        // video player layout generation start
         public static async Task<SkillResponse> VideoPlayer(SkillResponse response, string source)
         {
-            // Set video source
+            string videoWidth = "100vw";
+            string videoHeight = "100vh";
+
+            // set video source
             List<VideoSource> videoList = new List<VideoSource> { new VideoSource(source) };
 
-            var mainLayout = new Layout(new[] {
-                                new Container(
-                                    new Video(
-                                    ) { Width = "100vw", Height = "100vh", Autoplay = true, Source = videoList } // End of Video
-                                ) // End of Container
-                            }); // End of Layout
 
-            //// Make a rendering response
+            var mainLayout = new Layout(
+                                new Container(
+                                    new Video() { Width = videoWidth, Height = videoHeight, Autoplay = true, Source = videoList } // end of video
+                                ) // end of container
+                             ); // end of layout
+
+
+            // make a rendering response
             var renderDocument = new RenderDocumentDirective
             {
                 Token = "APLVideoPlayer",
                 Document = new APLDocument { MainTemplate = mainLayout }
             };
 
-            // Merge APL directives to the response then return to the play media intent handler
+            // merge apl directives to the response then return to the requested handler
             response.Response.Directives.Add(renderDocument);
             return response;
         }

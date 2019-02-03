@@ -1,5 +1,5 @@
-﻿using Amazon.Lambda.Core;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
 

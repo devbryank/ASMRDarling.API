@@ -39,21 +39,26 @@ namespace ASMRDarling.API.Templates
 
         const string MediaPlayerNoNextAudioSpeech = "<speak>" +
                                                          "<p>Next clip is not available.</p>" +
-                                                         "<p>Please choose other options.</p>" +
+                                                         "<p>Please choose another option.</p>" +
                                                     "</speak>";
 
         const string MediaPlayerNoPreviousAudioSpeech = "<speak>" +
                                                              "<p>Previous clip is not available.</p>" +
-                                                             "<p>Please choose other options.</p>" +
+                                                             "<p>Please choose another option.</p>" +
                                                         "</speak>";
 
         const string ExceptionAudioSpeech = "<speak>" +
                                                  "<p>Sorry, I didn't get your intention.</p>" +
-                                                 "<p>Please try again, or say help to hear about other options.</p>" +
+                                                 "<p>Please try again, or say help to hear about more options.</p>" +
                                             "</speak>";
 
+        const string SystemFaultExceptionSpeech = "<speak>" +
+                                                       "<p>Unable to get a response from the server.</p>" +
+                                                       "<p>Please contact the developer, if the problem persists.</p>" +
+                                                  "</speak>";
 
-        // Return launch request speech
+
+        // return launch request speech
         public static SsmlOutputSpeech LaunchSpeech(bool? hasDisplay)
         {
             if (hasDisplay == true)
@@ -63,38 +68,54 @@ namespace ASMRDarling.API.Templates
         }
 
 
-        // Return help request speech
+        // return help request speech
         public static SsmlOutputSpeech HelpSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = HelpAudioSpeech };
         }
 
 
-        // Return media player default request speech
+        // return play audio intent speech
+        public static SsmlOutputSpeech PlayAudioSpeech(string fileName)
+        {
+            return new SsmlOutputSpeech()
+            {
+                Ssml = $"<speak><p>Playing {fileName}</p></speak>"
+            };
+        }
+
+
+        // return media player control request speech
         public static SsmlOutputSpeech MediaPlayerControlSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = MediaPlayerDefaultSpeech };
         }
 
 
-        // Return no next media item intent speech
+        // return no previous media item intent speech
         public static SsmlOutputSpeech MediaPlayerNoPreviousSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = MediaPlayerNoPreviousAudioSpeech };
         }
 
 
-        // Return no next media item intent speech
+        // return no next media item intent speech
         public static SsmlOutputSpeech MediaPlayerNoNextSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = MediaPlayerNoNextAudioSpeech };
         }
 
 
-        // Return when exceptions caught
+        // return when dialog exceptions caught
         public static SsmlOutputSpeech ExceptionSpeech()
         {
             return new SsmlOutputSpeech() { Ssml = ExceptionAudioSpeech };
+        }
+
+        // return when system exceptions caught
+        public static SsmlOutputSpeech SystemFaultSpeech()
+        {
+            return new SsmlOutputSpeech() { Ssml = SystemFaultExceptionSpeech };
         }
     }
 }
