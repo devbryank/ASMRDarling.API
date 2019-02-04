@@ -36,7 +36,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("ASMR")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("ASMR")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("ASMR")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -47,7 +50,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("10 Triggers")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -58,7 +64,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("20 Triggers")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("20 Triggers")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("20 Triggers")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -69,7 +78,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("100 Triggers")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("100 Triggers")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("100 Triggers")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -80,7 +92,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("A to Z Triggers")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("A to Z Triggers")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("A to Z Triggers")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -91,7 +106,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Brushing")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Brushing")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Brushing")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -102,7 +120,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Head")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Head")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Head")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -113,7 +134,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Scalp")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Scalp")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Scalp")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -123,7 +147,10 @@ namespace ASMRDarling.API.Templates
                                                     new Text($"(09) {MediaItems.GetMediaItems()[8].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
                                                 ) {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Whispered")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Whispered")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Whispered")).VideoSource
+                                                        }
                                                     }
                                                 },
 
@@ -134,7 +161,10 @@ namespace ASMRDarling.API.Templates
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
-                                                        Arguments = new List<string> { MediaItems.GetMediaItems().Find(m => m.Title.Contains("Personal")).VideoSource }
+                                                        Arguments = new List<string> {
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Personal")).Title,
+                                                            MediaItems.GetMediaItems().Find(m => m.Title.Contains("Personal")).VideoSource
+                                                        }
                                                     }
                                                 },
                                             } // end of apl component
@@ -169,7 +199,7 @@ namespace ASMRDarling.API.Templates
 
             var mainLayout = new Layout(
                                 new Container(
-                                    new Video() { Width = videoWidth, Height = videoHeight, Autoplay = true, Source = videoList } // end of video
+                                    new Video() { Width = videoWidth, Height = videoHeight, Autoplay = false, Source = videoList } // end of video
                                 ) // end of container
                              ); // end of layout
 

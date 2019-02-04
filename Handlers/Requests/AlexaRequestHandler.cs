@@ -42,16 +42,21 @@ namespace ASMRDarling.API.Handlers
                         // get user event request
                         UserEventRequest userEventRequest = input.Request as UserEventRequest;
 
-                        string url = userEventRequest.Arguments[0] as string;
+                        string title = userEventRequest.Arguments[0] as string;
+                        string url = userEventRequest.Arguments[1] as string;
+                        session.Attributes["current_video_item"] = title;
+
                         logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Media file source URL: {url}");
+                        logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Session state current video item: {title}");
                         logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Generating a video app or APL video player response");
 
                         // set video app response
                         // response = ResponseBuilder.Empty();
                         // response.Response.Directives.Add(new VideoAppDirective(url));
 
-                        // set apl video player response
+                        // set apl video player response (autoplay = false, shouldendsession = false)
                         response = ResponseBuilder.Empty();
+                        response.Response.ShouldEndSession = false;
                         response = await AplTemplate.VideoPlayer(response, url);
                         break;
 

@@ -37,8 +37,17 @@ namespace ASMRDarling.API.Handlers
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
 
                 // get the most recently played media item
-                string currentClip = session.Attributes["current_clip"] as string;
-                MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentClip));
+                string currentMedia = null;
+
+                if (hasDisplay == true) {
+                    currentMedia = session.Attributes["current_video_item"] as string;
+                }
+                else
+                {
+                    currentMedia = session.Attributes["current_audio_item"] as string;
+                }
+
+                MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentMedia));
 
                 // split intent name to get the suffix only
                 var intentNamePartials = intent.Name.Split('.');

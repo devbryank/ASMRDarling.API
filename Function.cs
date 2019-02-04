@@ -55,7 +55,7 @@ namespace ASMRDarling.API
             logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
 
 
-            // store session state
+            // initialize and get session states
             if (input.Session == null)
                 input.Session = new Session();
 
@@ -68,9 +68,12 @@ namespace ASMRDarling.API
             session.Attributes["quick_response"] = new ProgressiveResponse(input);
 
             if (input.Context.AudioPlayer.Token != null)
-                session.Attributes["current_clip"] = input.Context.AudioPlayer.Token;
+                session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
             else
-                session.Attributes["current_clip"] = null;
+                session.Attributes["current_audio_item"] = null;
+
+            if (!session.Attributes.ContainsKey("current_video_item"))
+                session.Attributes["current_video_item"] = null;
 
             if (input.Request is UserEventRequest userEvent)
             {

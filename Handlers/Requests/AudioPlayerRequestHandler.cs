@@ -29,8 +29,8 @@ namespace ASMRDarling.API.Handlers
                 logger.LogLine($"[AudioPlayerRequestHandler.HandleRequest()] Audio Player request handling started");
 
                 // get the most recently played media item
-                string currentClip = session.Attributes["current_clip"] as string;
-                MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentClip));
+                string currentMedia = session.Attributes["current_audio_item"] as string;
+                MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentMedia));
 
                 // split request name to get the suffix only
                 var requestNamePartials = input.Request.Type.Split('.');
