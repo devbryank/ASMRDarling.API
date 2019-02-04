@@ -157,7 +157,7 @@ namespace ASMRDarling.API.Templates
                                                 // tenth clip: close up personal attention for you to sleep
                                                 new TouchWrapper(
                                                     new Image("https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png") { Width = imageWidth, Height = imageHeight },
-                                                    new Text($"(10) {MediaItems.GetMediaItems()[9].Title}") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
+                                                    new Text($"(10) { MediaItems.GetMediaItems()[9].Title }") { Color = clipNameFontColor, FontSize = clipNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
                                                 )
                                                 {
                                                     OnPress = new SendEvent {
@@ -199,7 +199,7 @@ namespace ASMRDarling.API.Templates
 
             var mainLayout = new Layout(
                                 new Container(
-                                    new Video() { Width = videoWidth, Height = videoHeight, Autoplay = false, Source = videoList } // end of video
+                                    new Video() { Id="apl_video_player", Width = videoWidth, Height = videoHeight, Autoplay = true, Source = videoList } // end of video
                                 ) // end of container
                              ); // end of layout
 

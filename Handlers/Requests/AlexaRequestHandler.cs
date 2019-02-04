@@ -47,7 +47,7 @@ namespace ASMRDarling.API.Handlers
                         session.Attributes["current_video_item"] = title;
 
                         logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Media file source URL: {url}");
-                        logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Session state current video item: {title}");
+                        logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Session state for the current video item: {title}");
                         logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Generating a video app or APL video player response");
 
                         // set video app response

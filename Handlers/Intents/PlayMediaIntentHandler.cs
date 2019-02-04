@@ -37,10 +37,15 @@ namespace ASMRDarling.API.Handlers
                 // get resolution, multiple slots in a dialog will cause an exception
                 ResolutionAuthority[] resolution = slot.Resolution.Authorities;
                 ResolutionValueContainer[] container = resolution[0].Values;
+                string title = container[0].Value.Name;
 
                 // get file extentions based on the display availability
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
                 string fileType = hasDisplay == true ? "mp4" : "mp3";
+
+                // store session state for a title
+                session.Attributes["current_video_item"] = title;
+                logger.LogLine($"[PlayMediaIntentHandler.HandleIntent()] Session state for the current video item: {title}");
 
                 // convert file name into lower cases with no white spaces
                 var fileName = Regex.Replace(container[0].Value.Name, @"\s", "").ToLower();
@@ -70,6 +75,7 @@ namespace ASMRDarling.API.Handlers
 
                     // set apl video player response
                     response = ResponseBuilder.Empty();
+                    response.Response.ShouldEndSession = false;
                     return await AplTemplate.VideoPlayer(response, url);
                 }
                 else

@@ -8,6 +8,7 @@ using Alexa.NET.Response.Directive;
 using ASMRDarling.API.Models;
 using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
+using Alexa.NET.APL.Commands;
 
 namespace ASMRDarling.API.Handlers
 {
@@ -39,7 +40,8 @@ namespace ASMRDarling.API.Handlers
                 // get the most recently played media item
                 string currentMedia = null;
 
-                if (hasDisplay == true) {
+                if (hasDisplay == true)
+                {
                     currentMedia = session.Attributes["current_video_item"] as string;
                 }
                 else
@@ -158,8 +160,23 @@ namespace ASMRDarling.API.Handlers
                     case PauseSuffix:
                         logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {PauseSuffix} response, type of {intent.Name}");
 
-                        // set pause response
-                        response = ResponseBuilder.AudioPlayerStop();
+                        // set pause command and response
+                        if (hasDisplay == true)
+                        {
+                            var aplPauseCommand = new ExecuteCommandsDirective("Pause APL Video Player", new[]
+                            {
+                                new ControlMedia
+                                {
+                                    Command = ControlMediaCommand.Pause,
+                                    ComponentId = "apl_video_player"
+                                }
+                            });
+
+                            response.Response.Directives.Add(aplPauseCommand);
+                        }
+                        else
+                            response = ResponseBuilder.AudioPlayerStop();
+
                         break;
 
                     // handle stop intent
