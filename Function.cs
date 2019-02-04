@@ -75,12 +75,6 @@ namespace ASMRDarling.API
             if (!session.Attributes.ContainsKey("current_video_item"))
                 session.Attributes["current_video_item"] = null;
 
-            if (input.Request is UserEventRequest userEvent)
-            {
-                var token = userEvent.Token;
-                var argument = userEvent.Arguments[0]; ;
-            }
-
             logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
 
