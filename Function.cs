@@ -38,48 +38,48 @@ namespace ASMRDarling.API
 
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
-            // start logging
-            var logger = context.Logger;
-            logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
-            logger.LogLine($"[Function.FunctionHandler()] Input details: {JsonConvert.SerializeObject(input)}");
+							// start logging
+							var logger = context.Logger;
+							logger.LogLine($"[Function.FunctionHandler()] {InvocationName} launched");
+							logger.LogLine($"[Function.FunctionHandler()] Input details: {JsonConvert.SerializeObject(input)}");
 
             // adding user event request converter
             new UserEventRequestHandler().AddToRequestConverter();
 
-            // get request type
-            string requestType = input.Request.Type;
-            logger.LogLine($"[Function.FunctionHandler()] Request type: {requestType}");
+							// get request type
+							string requestType = input.Request.Type;
+							logger.LogLine($"[Function.FunctionHandler()] Request type: {requestType}");
 
-            // check if the device has a display interface
-            bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
-            logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
+							// check if the device has a display interface
+							bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
+							logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
 
 
-            // initialize and get session states
-            if (input.Session == null)
-                input.Session = new Session();
+							// initialize and get session states
+							if (input.Session == null)
+								input.Session = new Session();
 
-            Session session = input.Session;
+							Session session = input.Session;
 
-            if (session.Attributes == null)
-                session.Attributes = new Dictionary<string, object>();
+							if (session.Attributes == null)
+								session.Attributes = new Dictionary<string, object>();
 
-            session.Attributes["has_display"] = hasDisplay;
-            session.Attributes["quick_response"] = new ProgressiveResponse(input);
+							session.Attributes["has_display"] = hasDisplay;
+							session.Attributes["quick_response"] = new ProgressiveResponse(input);
 
-            if (input.Context.AudioPlayer.Token != null)
-                session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
-            else
-                session.Attributes["current_audio_item"] = null;
+							if (input.Context.AudioPlayer.Token != null)
+								session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
+							else
+								session.Attributes["current_audio_item"] = null;
 
             if (!session.Attributes.ContainsKey("current_video_item"))
                 session.Attributes["current_video_item"] = null;
 
-            logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
+							logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
 
-            // declare response to return
-            SkillResponse response = new SkillResponse();
+							// declare response to return
+							SkillResponse response = new SkillResponse();
 
             // direct request into the matching handler
             switch (requestType.Split('.')[0])
