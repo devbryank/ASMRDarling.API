@@ -6,9 +6,10 @@ using Alexa.NET.APL.Commands;
 using Alexa.NET.APL.Components;
 using ASMRDarling.API.Models;
 
-namespace ASMRDarling.API.Templates
+namespace ASMRDarling.API.Data
 {
-    public class AplTemplate
+#warning need to be updated
+    class AplTemplate
     {
         // image properties
         static string imageWidth = "50vw";
@@ -30,8 +31,10 @@ namespace ASMRDarling.API.Templates
                                 new Frame(
                                     new Container(
                                         new Sequence(thumbnails) { Width = imageWidth, Height = "100vh" }
-                                    ) { Width = "100vw", Height = "100vh", AlignItems = "center", JustifyContent = "center" } // end of container
-                                ) { Width = "100vw", Height = "100vh", BackgroundColor = "white" } // end of frame
+                                    )
+                                    { Width = "100vw", Height = "100vh", AlignItems = "center", JustifyContent = "center" } // end of container
+                                )
+                                { Width = "100vw", Height = "100vh", BackgroundColor = "white" } // end of frame
                              ); // end of layout
 
             // make a rendering response
@@ -90,7 +93,8 @@ namespace ASMRDarling.API.Templates
                     new Text($"({ mediaItem.Id }) { mediaItem.Title }") { Color = mediaNameFontColor, FontSize = mediaNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
                 )
                 {
-                    OnPress = new SendEvent {
+                    OnPress = new SendEvent
+                    {
                         Arguments = new List<string> {
                             mediaItem.Title,
                             mediaItem.VideoSource

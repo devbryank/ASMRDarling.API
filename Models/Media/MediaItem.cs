@@ -1,6 +1,6 @@
 ﻿namespace ASMRDarling.API.Models
 {
-    public class MediaItem
+    class MediaItem
     {
         public int Id { get; set; }
         public string Title { get; set; }

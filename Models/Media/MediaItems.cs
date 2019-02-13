@@ -2,7 +2,7 @@
 
 namespace ASMRDarling.API.Models
 {
-    public class MediaItems
+    class MediaItems
     {
         public static List<MediaItem> GetMediaItems()
         {
