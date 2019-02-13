@@ -40,6 +40,7 @@ namespace ASMRDarling.API.Handlers
                 }
                 else
                 {
+                    // Audio only response
                     logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial audio only response");
                     return ResponseBuilder.Ask(output, null);
                 }

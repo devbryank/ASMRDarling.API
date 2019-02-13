@@ -20,10 +20,11 @@ namespace ASMRDarling.API.Helpers
 
             SkillResponse response = new SkillResponse();
 
+            // Try to process the request
             try
             {
                 logger.LogLine($"[{funcName}] Processing {taskName} in progress");
-                response = handler();
+                response = await handler();
                 logger.LogLine($"[{funcName}] Processing {taskName} completed");
             }
             catch (Exception ex)

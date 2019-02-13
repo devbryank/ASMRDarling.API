@@ -21,6 +21,11 @@ namespace ASMRDarling.API.Data
                                                 "<p>Otherwise, you can simply say the name of the video you want to play.</p>" +
                                          "</speak>";
 
+        const string SystemExceptionSpeech = "<speak>" +
+                                                    "<p>Unable to get a response from the server.</p>" +
+                                                    "<p>Please contact the developer, if the problem persists.</p>" +
+                                             "</speak>";
+
 
         // Return launch request speech
         public static SsmlOutputSpeech LaunchSpeech(bool? hasDisplay)
@@ -29,6 +34,13 @@ namespace ASMRDarling.API.Data
                 return new SsmlOutputSpeech() { Ssml = LaunchVideoSpeech };
             else
                 return new SsmlOutputSpeech() { Ssml = LaunchAudioSpeech };
+        }
+
+
+        // Return when system exception speech
+        public static SsmlOutputSpeech ExceptionSpeech()
+        {
+            return new SsmlOutputSpeech() { Ssml = SystemExceptionSpeech };
         }
     }
 }

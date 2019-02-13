@@ -1,5 +1,8 @@
 ﻿namespace ASMRDarling.API.Models
 {
+    /// <summary>
+    /// Base model for the media item
+    /// </summary>
     class MediaItem
     {
         public int Id { get; set; }

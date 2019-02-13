@@ -2,6 +2,9 @@
 
 namespace ASMRDarling.API.Models
 {
+    /// <summary>
+    /// This class contains a list of media items
+    /// </summary>
     class MediaItems
     {
         public static List<MediaItem> GetMediaItems()

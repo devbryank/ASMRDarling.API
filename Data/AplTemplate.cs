@@ -9,6 +9,10 @@ using ASMRDarling.API.Models;
 namespace ASMRDarling.API.Data
 {
 #warning need to be updated
+
+    /// <summary>
+    /// 
+    /// </summary>
     class AplTemplate
     {
         // image properties
