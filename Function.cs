@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Amazon.Lambda.Core;
 
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
 using ASMRDarling.API.Data;
@@ -15,20 +16,27 @@ using ASMRDarling.API.Interfaces;
 namespace ASMRDarling.API
 {
     /// <summary>
-    /// Entry point for the AWS Lambda function
+    /// Entry point of the AWS Lambda function
     /// </summary>
     public class Function
     {
+#warning instantiate handlers only when needed
+#warning implement dynamo db
         // Request handlers
         readonly ILaunchRequestHandler launchRequestHandler = new LaunchRequestHandler();
         readonly IIntentRequestHandler intentRequestHandler = new IntentRequestHandler();
 
+        //// request handlers
+        //readonly IAudioPlayerRequestHandler audioPlayerRequestHandler = new AudioPlayerRequestHandler();
+        //readonly IAlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
+        //readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
-        // Handle the incoming request from Alexa
+        // Handle incoming request from Alexa
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             SkillResponse response = new SkillResponse();
             new UserEventRequestHandler().AddToRequestConverter();
+
 
             // Start logging
             ILambdaLogger logger = context.Logger;
@@ -45,7 +53,7 @@ namespace ASMRDarling.API
 
             logger.LogLine($"[Function.FunctionHandler()] Main request type: {mainRequestType}");
 
-            if (subRequestType != null || !subRequestType.Equals(mainRequestType))
+            if (subRequestType != null && !subRequestType.Equals(mainRequestType))
                 logger.LogLine($"[Function.FunctionHandler()] Sub request type: {subRequestType} derived from {requestType}");
 
 
@@ -54,17 +62,14 @@ namespace ASMRDarling.API
             logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
 
 
+#warning better used db instead of session
+
             // Initialize & set session attributes
             Session session = input.Session;
-
-            if (session == null || session.Attributes == null)
+            if (session.Attributes == null)
             {
-                logger.LogLine($"[Function.FunctionHandler()] Session state is empty, going to be initialized");
-
-                session = new Session
-                {
-                    Attributes = new Dictionary<string, object>()
-                };
+                logger.LogLine($"[Function.FunctionHandler()] New session started, initializing attributes");
+                session.Attributes = new Dictionary<string, object>();
             }
 
             logger.LogLine($"[Function.FunctionHandler()] Setting up essential session attributes");
@@ -72,6 +77,8 @@ namespace ASMRDarling.API
             session.Attributes["has_display"] = hasDisplay;
             session.Attributes["quick_response"] = new ProgressiveResponse(input);
             session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
+            if (!session.Attributes.ContainsKey("user_state"))
+                session.Attributes["user_state"] = string.Empty;
 
             logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
@@ -85,13 +92,47 @@ namespace ASMRDarling.API
                     response = await launchRequestHandler.HandleRequest(input, session, logger);
                     break;
 
+
                 // Handle intent request
                 case AlexaConstants.IntentRequest:
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaConstants.IntentRequest} handler");
                     response = await intentRequestHandler.HandleRequest(input, session, logger);
                     break;
 
+
+                //                // handle audio player request
+                //                case AudioPlayerRequestName:
+                //                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {AudioPlayerRequestName} handler");
+                //                    response = await audioPlayerRequestHandler.HandleRequest(input, session, logger);
+                //                    break;
+
+                //                // handle alexa request
+                //                case AlexaRequestName:
+                //                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaRequestName} handler");
+                //                    response = await alexaRequestHandler.HandleRequest(input, session, logger);
+                //                    break;
+
+                //                // handle system exception request
+                //                case ExceptionRequestName:
+
+                //#warning not yet implemented
+
+                //                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {ExceptionRequestName} handler");
+                //                    response = ResponseBuilder.Empty();
+                //                    break;
+
+                //                // handle session ended request
+                //                case SessionEndedRequestName:
+                //                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {SessionEndedRequestName} handler");
+                //                    response = await sessionEndedRequestHandler.HandleRequest(input, session, logger);
+                //                    break;
+
+
+                // Handle default fallback case
                 default:
+                    logger.LogLine($"[Function.FunctionHandler()] Request was not recognized, directing request into the default case handler");
+                    var output = SsmlTemplate.FallbackSpeech();
+                    response = ResponseBuilder.Ask(output, null);
                     break;
             }
 

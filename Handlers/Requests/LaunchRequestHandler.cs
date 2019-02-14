@@ -26,11 +26,13 @@ namespace ASMRDarling.API.Handlers
 
 
                 // Save user state
-                session.Attributes["user_state"] = "menu";
+                session.Attributes["user_state"] = UserStates.Menu;
+                string userState = session.Attributes["user_state"] as string;
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {userState}");
 
 
                 // Get session display value, then set an output speech
-                bool? hasDisplay = session.Attributes["has_display"] as bool?;
+                bool ? hasDisplay = session.Attributes["has_display"] as bool?;
                 SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
 
                 if (hasDisplay == true)
@@ -39,14 +41,14 @@ namespace ASMRDarling.API.Handlers
                     logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial APL response");
 
                     // Get APL response then return
-                    SkillResponse response = ResponseBuilder.Ask(output, null);
+                    SkillResponse response = ResponseBuilder.Ask(output, null, session);
                     return await AplTemplate.MenuDisplay(response);
                 }
                 else
                 {
                     // Audio only response
                     logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial audio only response");
-                    return ResponseBuilder.Ask(output, null);
+                    return ResponseBuilder.Ask(output, null, session);
                 }
 
             }, logger);

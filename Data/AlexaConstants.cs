@@ -5,16 +5,29 @@
     /// </summary>
     static class AlexaConstants
     {
+        //// request names
+        //const string AudioPlayerRequestName = "AudioPlayer";
+        //const string AlexaRequestName = "Alexa";
+        //const string ExceptionRequestName = "System";
+        //const string SessionEndedRequestName = "SessionEndedRequest";
+
         // Invocation constant
         public const string Invocation = "Darling's Gift";
+
+
+        // Intent slot constant
+        public const string MediaItemSlot = "MediaItemName";
+
 
         // Request constants
         public const string LaunchRequest = "LaunchRequest";
         public const string IntentRequest = "IntentRequest";
 
+
         // Intent constants
-        public const string BuiltIn = "Amazon";
+        public const string BuiltIn = "AMAZON";
         public const string PlayASMR = "PlayASMR";
+
 
         // Sub built in intent constants
         public const string BuiltInHelp = "HelpIntent";

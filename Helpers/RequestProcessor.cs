@@ -17,11 +17,11 @@ namespace ASMRDarling.API.Helpers
     {
         public static async Task<SkillResponse> ProcessAlexaRequest(string funcName, string taskName, Func<Task<SkillResponse>> handler, ILambdaLogger logger)
         {
+            SkillResponse response = new SkillResponse();
             logger.LogLine($"[{funcName}] {taskName} handling started");
 
-            SkillResponse response = new SkillResponse();
 
-            // Try to process the request
+            // Process the request
             try
             {
                 logger.LogLine($"[{funcName}] Processing {taskName} in progress");
@@ -37,6 +37,7 @@ namespace ASMRDarling.API.Helpers
                 response = ResponseBuilder.Tell(output);
             }
 
+            // Return response
             return response;
         }
     }

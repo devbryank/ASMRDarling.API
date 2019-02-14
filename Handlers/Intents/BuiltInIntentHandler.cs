@@ -5,6 +5,7 @@ using Amazon.Lambda.Core;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
+using Alexa.NET.Response.Directive;
 using ASMRDarling.API.Data;
 using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
@@ -27,10 +28,13 @@ namespace ASMRDarling.API.Handlers
                 ProgressiveResponse progressiveResponse = session.Attributes["quick_response"] as ProgressiveResponse;
 
 
-                // Get display availability
+                // Get session attributes
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
+                string userState = session.Attributes["user_state"] as string;
+                string subIntentType = session.Attributes["sub_intent"] as string;
+                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] User state: {userState}");
 
-
+#warning implement video
                 // Get most recently played media item
                 string currentMedia = null;
 
@@ -46,103 +50,100 @@ namespace ASMRDarling.API.Handlers
                 MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentMedia));
 
 
-                // Get sub intent name
-                string subIntentType = session.Attributes["sub_intent"] as string;
-
-
                 // Direct intent into the appropriate handler
-                switch (subIntentType)
+                if (userState != UserStates.Menu || subIntentType.Equals(AlexaConstants.BuiltInHelp))
                 {
-                    // Handle help intent
-                    case AlexaConstants.BuiltInHelp:
-                        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInHelp} response, type of {intent.Name}");
-                        output = SsmlTemplate.HelpSpeech();
-                        response = ResponseBuilder.Ask(output, null);
-                        break;
+                    switch (subIntentType)
+                    {
+                        // Handle help intent
+                        case AlexaConstants.BuiltInHelp:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInHelp} response, type of {intent.Name}");
+                            output = SsmlTemplate.HelpSpeech();
+                            response = ResponseBuilder.Ask(output, null, session);
+                            break;
 
-                        //    // handle next intent
-                        //    case NextSuffix:
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {NextSuffix} response, type of {intent.Name}");
 
-                        //        // get next media item
-                        //        MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
+                        // Handle next intent
+                        case AlexaConstants.BuiltInNext:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInNext} response, type of {intent.Name}");
 
-                        //        // send a quick response before loading the content
-                        //        await progressiveResponse.SendSpeech($"Playing next, {nextMediaItem.Title}");
+                            // Get next media item
+                            MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
 
-                        //        // set next response
-                        //        if (nextMediaItem != null)
-                        //        {
-                        //            // if next media item is available
-                        //            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item title: {nextMediaItem.Title}");
+                            
+                            // Set next response
+                            if (nextMediaItem != null)
+                            {
+                                // Send a quick response before loading the content
+                                await progressiveResponse.SendSpeech($"Playing next media, {nextMediaItem.Title}");
 
-                        //            if (hasDisplay == true)
-                        //            {
-                        //                response = ResponseBuilder.Empty();
-                        //                response.Response.Directives.Add(new VideoAppDirective(nextMediaItem.VideoSource));
-                        //            }
-                        //            else
-                        //            {
-                        //                response = ResponseBuilder.Empty();
-                        //                response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, nextMediaItem.AudioSource, nextMediaItem.FileName);
-                        //            }
-                        //        }
-                        //        else
-                        //        {
-                        //            // if next media item is not available
-                        //            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item is not available");
+                                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item title: {nextMediaItem.Title}");
 
-                        //            output = SsmlTemplate.MediaPlayerNoNextSpeech();
-                        //            response = ResponseBuilder.Tell(output);
-                        //        }
-                        //        break;
+                                if (hasDisplay == true)
+                                {
+                                    response = ResponseBuilder.Empty();
+                                    response.Response.Directives.Add(new VideoAppDirective(nextMediaItem.VideoSource));
+                                }
+                                else
+                                {
+                                    response = ResponseBuilder.Empty();
+                                    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, nextMediaItem.AudioSource, nextMediaItem.FileName);
+                                }
+                            }
+                            else
+                            {
+                                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item is not available");
 
-                        //    // handle previous intent
-                        //    case PreviousSuffix:
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {PreviousSuffix} response, type of {intent.Name}");
+                                output = SsmlTemplate.NoNextMediaSpeech();
+                                response = ResponseBuilder.Ask(output, null, session);
+                            }
+                            break;
 
-                        //        // get previous media item
-                        //        MediaItem previousMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id - 1));
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
 
-                        //        // send a quick response before loading the content
-                        //        await progressiveResponse.SendSpeech($"Playing previous, {previousMediaItem.Title}");
+                        // Handle previous intent
+                        case AlexaConstants.BuiltInPrevious:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInPrevious} response, type of {intent.Name}");
 
-                        //        // set previous response
-                        //        if (previousMediaItem != null)
-                        //        {
-                        //            // if previous media item is available
-                        //            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item title: {previousMediaItem.Title}");
+                            // Get previous media item
+                            MediaItem previousMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id - 1));
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
 
-                        //            if (hasDisplay == true)
-                        //            {
-                        //                response = ResponseBuilder.Empty();
-                        //                response.Response.Directives.Add(new VideoAppDirective(previousMediaItem.VideoSource));
-                        //            }
-                        //            else
-                        //            {
-                        //                response = ResponseBuilder.Empty();
-                        //                response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
-                        //            }
-                        //        }
-                        //        else
-                        //        {
-                        //            // if previous media item is not available
-                        //            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Previous media item is not available");
+                            
+                            // Set previous response
+                            if (previousMediaItem != null)
+                            {
+                                // Send a quick response before loading the content
+                                await progressiveResponse.SendSpeech($"Playing previous, {previousMediaItem.Title}");
 
-                        //            output = SsmlTemplate.MediaPlayerNoPreviousSpeech();
-                        //            response = ResponseBuilder.Tell(output);
-                        //        }
-                        //        break;
+                                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Next media item title: {previousMediaItem.Title}");
 
-                        //    // handle resume intent
-                        //    case ResumeSuffix:
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {ResumeSuffix} response, type of {intent.Name}");
+                                if (hasDisplay == true)
+                                {
+                                    response = ResponseBuilder.Empty();
+                                    response.Response.Directives.Add(new VideoAppDirective(previousMediaItem.VideoSource));
+                                }
+                                else
+                                {
+                                    response = ResponseBuilder.Empty();
+                                    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
+                                }
+                            }
+                            else
+                            {
+                                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Previous media item is not available");
 
-                        //        // set resume response
-                        //        //response = ResponseBuilder.AudioPlayerPlay();
-                        //        break;
+                                output = SsmlTemplate.NoPreviousMediaSpeech();
+                                response = ResponseBuilder.Ask(output, null, session);
+                            }
+                            break;
+
+
+                        // Handle resume intent
+                        //case AlexaConstants.BuiltInResume:
+                        //    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInResume} response, type of {intent.Name}");
+                        //    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, null, );
+                        //    break;
 
                         //    // handle pause intent
                         //    case PauseSuffix:
@@ -175,13 +176,21 @@ namespace ASMRDarling.API.Handlers
                         //        response = ResponseBuilder.AudioPlayerStop();
                         //        break;
 
-                        //    // handle default case
-                        //    default:
-                        //        logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a defailt response, type of {intent.Name}");
-                        //        output = SsmlTemplate.MediaPlayerControlSpeech();
-                        //        response = ResponseBuilder.Ask(output, null);
-                        //        break;
-                        //}
+
+                        // Handle default fallback case
+                        default:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a default fallback response");
+                            output = SsmlTemplate.ControlMediaSpeech();
+                            response = ResponseBuilder.Ask(output, null, session);
+                            break;
+                    }
+                }
+                else
+                {
+                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Unable to process {subIntentType}, user is at {userState}");
+                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a default fallback response");
+                    output = SsmlTemplate.CommandFallbackSpeech();
+                    response = ResponseBuilder.Ask(output, null, session);
                 }
 
                 // Return response

@@ -2,6 +2,7 @@
 
 using Amazon.Lambda.Core;
 
+using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
@@ -17,8 +18,8 @@ namespace ASMRDarling.API.Handlers
     class IntentRequestHandler : IIntentRequestHandler
     {
         // Intent handlers
-        //readonly IPlayMediaIntentHandler playMediaIntentHandler;
         readonly IBuiltInIntentHandler builtInIntentHandler = new BuiltInIntentHandler();
+        readonly IPlayAsmrIntentHandler playAsmrIntentHandler = new PlayAsmrIntentHandler();
 
 
         public Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
@@ -43,7 +44,7 @@ namespace ASMRDarling.API.Handlers
 
                 logger.LogLine($"[IntentRequestHandler.HandleRequest()] Main intent type: {mainIntentType}");
 
-                if (subIntentType != null || !subIntentType.Equals(mainIntentType))
+                if (subIntentType != null && !subIntentType.Equals(mainIntentType))
                     logger.LogLine($"[IntentRequestHandler.HandleRequest()] Sub intent type: {subIntentType} derived from {intentType}");
 
                 session.Attributes["sub_intent"] = subIntentType;
@@ -52,42 +53,26 @@ namespace ASMRDarling.API.Handlers
                 // Direct intent into the appropriate handler
                 switch (mainIntentType)
                 {
-                    // Handle play media intent
-                    //case AlexaConstants.PlayASMR:
-                    //    logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaConstants.PlayASMR} handler");
-                    //    response = await playMediaIntentHandler.HandleIntent(intent, session, logger);
-                    //    break;
-
+                    // Handle built in intent
                     case AlexaConstants.BuiltIn:
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaConstants.BuiltIn} handler");
                         response = await builtInIntentHandler.HandleIntent(intent, session, logger);
                         break;
 
 
+                    // Handle play media intent
+                    case AlexaConstants.PlayASMR:
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaConstants.PlayASMR} handler");
+                        response = await playAsmrIntentHandler.HandleIntent(intent, session, logger);
+                        break;
 
 
-
-
-
-
-                        //// handle other intents (built in, exception)
-                        //default:
-                        //    var intentNamePartials = intent.Name.Split('.');
-
-                        //    if (intentNamePartials[0].Equals(BuiltInIntentName))
-                        //    {
-                        //        // handle built in intent
-                        //        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {BuiltInIntentName} handler");
-                        //        response = await builtInIntentHandler.HandleIntent(intent, session, logger);
-                        //    }
-                        //    else
-                        //    {
-                        //        // handle default case, without any recognizable intent
-                        //        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent was not recognized, directing intent into the default case");
-                        //        output = SsmlTemplate.ExceptionSpeech();
-                        //        response = ResponseBuilder.Tell(output);
-                        //    }
-                        //    break;
+                    // Handle default fallback case
+                    default:
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent was not recognized, directing intent into the default case handler");
+                        output = SsmlTemplate.FallbackSpeech();
+                        response = ResponseBuilder.Tell(output);
+                        break;
                 }
 
                 // Return response

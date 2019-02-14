@@ -15,8 +15,4 @@
     <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>
