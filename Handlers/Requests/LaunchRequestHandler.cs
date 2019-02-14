@@ -25,6 +25,10 @@ namespace ASMRDarling.API.Handlers
                 LaunchRequest launchRequest = input.Request as LaunchRequest;
 
 
+                // Save user state
+                session.Attributes["user_state"] = "menu";
+
+
                 // Get session display value, then set an output speech
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
                 SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
