@@ -27,7 +27,7 @@ namespace ASMRDarling.API.Handlers
 
         public Task<SkillResponse> HandleRequest(SkillRequest input, MediaState currentState, Session session, ILambdaLogger logger)
         {
-            return RequestProcessor.ProcessAlexaRequest("IntentRequestHandler.HandleRequest()", "Intent Request", async () =>
+            return RequestProcessor.ProcessAlexaRequest("[IntentRequestHandler.HandleRequest()]", "Intent Request", async () =>
             {
                 // Get intent request
                 var request = input.Request as IntentRequest;

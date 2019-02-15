@@ -5,9 +5,11 @@
     /// </summary>
     static class AlexaConstants
     {
+
+#warning change name to alexa request constants
         //// request names
         //const string AudioPlayerRequestName = "AudioPlayer";
-        //const string AlexaRequestName = "Alexa";
+        public const string Alexa = "Alexa";
         //const string ExceptionRequestName = "System";
         //const string SessionEndedRequestName = "SessionEndedRequest";
 
@@ -36,5 +38,8 @@
         public const string BuiltInResume = "ResumeIntent";
         public const string BuiltInPause = "PauseIntent";
         public const string BuiltInStop = "StopIntent";
+
+        // Sub alexa intent constants
+        public const string UserEvent = "UserEvent";
     }
 }

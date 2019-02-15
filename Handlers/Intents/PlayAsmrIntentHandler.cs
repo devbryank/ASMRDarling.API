@@ -27,9 +27,9 @@ namespace ASMRDarling.API.Handlers
 
 
                 // Save user state
-                session.Attributes["user_state"] = UserStates.Media;
-                string userState = session.Attributes["user_state"] as string;
-                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {userState}");
+                //session.Attributes["user_state"] = UserStates.Media;
+                //string userState = session.Attributes["user_state"] as string;
+                //logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {userState}");
 
 
                 // Get slot values
@@ -78,9 +78,9 @@ namespace ASMRDarling.API.Handlers
 
 #warning video app or apl video? which one is better?
 
-                    // set video app response
-                    // response = ResponseBuilder.Empty();
-                    // response.Response.Directives.Add(new VideoAppDirective(url));
+                    //set video app response
+                    //response = ResponseBuilder.Empty();
+                    //response.Response.Directives.Add(new VideoAppDirective(url));
 
                     // Set APL video player response
                     return await AplTemplate.VideoPlayer(response, url);

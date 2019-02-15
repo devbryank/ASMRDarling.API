@@ -30,9 +30,9 @@ namespace ASMRDarling.API.Handlers
 
                 // Get session attributes
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
-                string userState = session.Attributes["user_state"] as string;
+          
                 string subIntentType = session.Attributes["sub_intent"] as string;
-                logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] User state: {userState}");
+                //logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] User state: {userState}");
 
 #warning implement video
                 // Get most recently played media item
@@ -192,7 +192,7 @@ namespace ASMRDarling.API.Handlers
                 }
                 else
                 {
-                    logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Unable to process {subIntentType}, user is at {userState}");
+                    //logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Unable to process {subIntentType}, user is at {userState}");
                     logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a default fallback response");
                     output = SsmlTemplate.CommandFallbackSpeech();
                     response = ResponseBuilder.Ask(output, null, session);

@@ -24,7 +24,7 @@ namespace ASMRDarling.API
         ILaunchRequestHandler launchRequestHandler;
         IIntentRequestHandler intentRequestHandler;
         //readonly IAudioPlayerRequestHandler audioPlayerRequestHandler = new AudioPlayerRequestHandler();
-        //readonly IAlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
+        IAlexaRequestHandler alexaRequestHandler;
         //readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
 
@@ -76,9 +76,10 @@ namespace ASMRDarling.API
 
             // initialize & set session attributes
             Session session = input.Session;
-            if (session.Attributes == null)
+            if (session == null || session.Attributes == null)
             {
                 logger.LogLine($"[Function.FunctionHandler()] New session started, initializing attributes");
+                session = new Session();
                 session.Attributes = new Dictionary<string, object>();
             }
 
@@ -114,6 +115,8 @@ namespace ASMRDarling.API
                     intentRequestHandler = new IntentRequestHandler();
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaConstants.IntentRequest} handler");
                     response = await intentRequestHandler.HandleRequest(input, currentState, session, logger);
+                    await mediaStateHelper.SaveMediaState(currentState);
+
                     break;
 
 
@@ -123,11 +126,12 @@ namespace ASMRDarling.API
                 //                    response = await audioPlayerRequestHandler.HandleRequest(input, session, logger);
                 //                    break;
 
-                //                // handle alexa request
-                //                case AlexaRequestName:
-                //                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaRequestName} handler");
-                //                    response = await alexaRequestHandler.HandleRequest(input, session, logger);
-                //                    break;
+                // handle alexa request
+                case AlexaConstants.Alexa:
+                    alexaRequestHandler = new AlexaRequestHandler();
+                    logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaConstants.Alexa} handler");
+                    response = await alexaRequestHandler.HandleRequest(input, currentState, session, logger);
+                    break;
 
                 //                // handle system exception request
                 //                case ExceptionRequestName:
