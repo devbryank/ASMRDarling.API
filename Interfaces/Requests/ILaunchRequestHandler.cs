@@ -1,4 +1,4 @@
 ﻿namespace ASMRDarling.API.Interfaces
 {
-    interface ILaunchRequestHandler : IRequestHandler { }
+    internal interface ILaunchRequestHandler : IRequestHandler { }
 }

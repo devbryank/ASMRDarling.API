@@ -6,7 +6,7 @@ using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
-using ASMRDarling.API.Data;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
 using ASMRDarling.API.Interfaces;
@@ -18,7 +18,7 @@ namespace ASMRDarling.API.Handlers
     /// </summary>
     class BuiltInIntentHandler : IBuiltInIntentHandler
     {
-        public Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
+        public Task<SkillResponse> HandleIntent(Intent intent, MediaState currentState, Session session, ILambdaLogger logger)
         {
             return RequestProcessor.ProcessAlexaRequest("BuiltInIntentHandler.HandleIntent()", "Built In Intent", async () =>
             {
@@ -44,14 +44,14 @@ namespace ASMRDarling.API.Handlers
                 //}
                 //else
                 //{
-                currentMedia = session.Attributes["current_audio_item"] as string;
+                currentMedia = currentState.State.Token;
                 //}
 
                 MediaItem currentMediaItem = MediaItems.GetMediaItems().Find(m => m.FileName.Contains(currentMedia));
 
 
                 // Direct intent into the appropriate handler
-                if (userState != UserStates.Menu || subIntentType.Equals(AlexaConstants.BuiltInHelp))
+                if (currentState.State.State != "MENU_MODE" || subIntentType.Equals(AlexaConstants.BuiltInHelp))
                 {
                     switch (subIntentType)
                     {
@@ -71,7 +71,7 @@ namespace ASMRDarling.API.Handlers
                             MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
                             logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
 
-                            
+
                             // Set next response
                             if (nextMediaItem != null)
                             {
@@ -87,6 +87,9 @@ namespace ASMRDarling.API.Handlers
                                 }
                                 else
                                 {
+
+                                    currentState.State.Index = nextMediaItem.Id;
+                                    currentState.State.Token = nextMediaItem.FileName;
                                     response = ResponseBuilder.Empty();
                                     response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, nextMediaItem.AudioSource, nextMediaItem.FileName);
                                 }
@@ -109,7 +112,7 @@ namespace ASMRDarling.API.Handlers
                             MediaItem previousMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id - 1));
                             logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Current media item title: {currentMediaItem.Title}");
 
-                            
+
                             // Set previous response
                             if (previousMediaItem != null)
                             {
@@ -125,6 +128,8 @@ namespace ASMRDarling.API.Handlers
                                 }
                                 else
                                 {
+                                    currentState.State.Token = previousMediaItem.FileName;
+                                    currentState.State.Index = previousMediaItem.Id;
                                     response = ResponseBuilder.Empty();
                                     response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
                                 }

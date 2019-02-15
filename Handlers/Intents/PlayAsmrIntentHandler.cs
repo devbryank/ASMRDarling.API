@@ -8,8 +8,9 @@ using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using ASMRDarling.API.Helpers;
-using ASMRDarling.API.Data;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
+using ASMRDarling.API.Models;
 
 namespace ASMRDarling.API.Handlers
 {
@@ -18,7 +19,7 @@ namespace ASMRDarling.API.Handlers
     /// </summary>
     class PlayAsmrIntentHandler : IPlayAsmrIntentHandler
     {
-        public Task<SkillResponse> HandleIntent(Intent intent, Session session, ILambdaLogger logger)
+        public Task<SkillResponse> HandleIntent(Intent intent, MediaState currentState, Session session, ILambdaLogger logger)
         {
             return RequestProcessor.ProcessAlexaRequest("PlayAsmrIntentHandler.HandleIntent()", "Play ASMR Intent", async () =>
             {
@@ -87,7 +88,11 @@ namespace ASMRDarling.API.Handlers
                 else
                 {
                     logger.LogLine($"[PlayAsmrIntentHandler.HandleIntent()] Generating an audio player response");
-                    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, fileName);
+                    currentState.State.State = "PLAY_MODE";
+                    currentState.State.Token = fileName;
+                    currentState.State.Index = MediaItems.GetMediaItems().Find(m => m.FileName.Equals(fileName)).Id;
+
+                    response = ResponseBuilder.AudioPlayerPlay(PlayBehavior.ReplaceAll, url, currentState.State.Token);
                 }
 
                 // Return response

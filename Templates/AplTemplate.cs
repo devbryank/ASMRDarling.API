@@ -1,4 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿
+
+
+//UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Alexa.NET.Response;
 using Alexa.NET.Response.APL;
@@ -6,9 +25,9 @@ using Alexa.NET.APL.Commands;
 using Alexa.NET.APL.Components;
 using ASMRDarling.API.Models;
 
-namespace ASMRDarling.API.Data
+namespace ASMRDarling.API.Templates
 {
-#warning need to be updated
+#warning need to be updated & refactored
 
     /// <summary>
     /// 

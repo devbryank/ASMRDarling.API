@@ -1,14 +1,14 @@
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
 using Newtonsoft.Json;
 using Amazon.Lambda.Core;
-
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
-using ASMRDarling.API.Data;
+using ASMRDarling.API.Models;
+using ASMRDarling.API.Helpers;
 using ASMRDarling.API.Handlers;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -16,55 +16,65 @@ using ASMRDarling.API.Interfaces;
 namespace ASMRDarling.API
 {
     /// <summary>
-    /// Entry point of the AWS Lambda function
+    /// entry point of the lambda function
     /// </summary>
     public class Function
     {
-#warning instantiate handlers only when needed
-#warning implement dynamo db
-        // Request handlers
-        readonly ILaunchRequestHandler launchRequestHandler = new LaunchRequestHandler();
-        readonly IIntentRequestHandler intentRequestHandler = new IntentRequestHandler();
-
-        //// request handlers
+        // request handlers
+        ILaunchRequestHandler launchRequestHandler;
+        IIntentRequestHandler intentRequestHandler;
         //readonly IAudioPlayerRequestHandler audioPlayerRequestHandler = new AudioPlayerRequestHandler();
         //readonly IAlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
         //readonly ISessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
 
-        // Handle incoming request from Alexa
+
+        // handle request from alexa
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             SkillResponse response = new SkillResponse();
             new UserEventRequestHandler().AddToRequestConverter();
 
 
-            // Start logging
+            // start logging
             ILambdaLogger logger = context.Logger;
             logger.LogLine($"[Function.FunctionHandler()] Alexa skill {AlexaConstants.Invocation} launched");
             logger.LogLine($"[Function.FunctionHandler()] Input details: {JsonConvert.SerializeObject(input)}");
             logger.LogLine($"[Function.FunctionHandler()] Lambda context details: {JsonConvert.SerializeObject(context)}");
 
 
-            // Get request type
+            // get main & sub request types
             string requestType = input.Request.Type;
             string[] requestTypes = requestType.Split('.');
             string mainRequestType = requestTypes[0];
-            string subRequestType = requestTypes[requestTypes.Length - 1];
+            string subRequestType = requestTypes.Length > 1 ? requestTypes[requestTypes.Length - 1] : null;
 
             logger.LogLine($"[Function.FunctionHandler()] Main request type: {mainRequestType}");
 
-            if (subRequestType != null && !subRequestType.Equals(mainRequestType))
+            if (subRequestType != null)
                 logger.LogLine($"[Function.FunctionHandler()] Sub request type: {subRequestType} derived from {requestType}");
 
 
-            // Check if the device has a display interface
+            // check if the device has a display interface
             bool hasDisplay = input.Context.System.Device.SupportedInterfaces.ContainsKey("Display");
             logger.LogLine($"[Function.FunctionHandler()] Diplay availability: {hasDisplay}");
 
 
-#warning better used db instead of session
+            // initialize & load db components for states
+            logger.LogLine($"[Function.FunctionHandler()] Acquiring user state from DynamoDB");
 
-            // Initialize & set session attributes
+            MediaStateHelper mediaStateHelper = new MediaStateHelper(logger);
+            await mediaStateHelper.VerifyTable();
+            string userId = input.Session != null ? input.Session.User.UserId : input.Context.System.User.UserId;
+
+            var lastState = await mediaStateHelper.GetMediaState(userId); // this will return an initial default state if no previous states exist
+            var currentState = new MediaState() { UserId = userId };
+
+            currentState.State = lastState.State;
+
+            logger.LogLine($"[Function.FunctionHandler()] Current user state: {JsonConvert.SerializeObject(currentState)}");
+
+
+            // initialize & set session attributes
             Session session = input.Session;
             if (session.Attributes == null)
             {
@@ -76,27 +86,34 @@ namespace ASMRDarling.API
 
             session.Attributes["has_display"] = hasDisplay;
             session.Attributes["quick_response"] = new ProgressiveResponse(input);
-            session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
-            if (!session.Attributes.ContainsKey("user_state"))
-                session.Attributes["user_state"] = string.Empty;
 
             logger.LogLine($"[Function.FunctionHandler()] Session details: {JsonConvert.SerializeObject(session)}");
 
 
-            // Direct request into the appropriate handler
+
+            //session.Attributes["current_audio_item"] = input.Context.AudioPlayer.Token;
+            //if (!session.Attributes.ContainsKey("user_state"))
+            //    session.Attributes["user_state"] = string.Empty;
+
+
+
+            // direct request into the appropriate handler
             switch (mainRequestType)
             {
-                // Handle launch request
+                // handle launch request
                 case AlexaConstants.LaunchRequest:
+                    launchRequestHandler = new LaunchRequestHandler();
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaConstants.LaunchRequest} handler");
-                    response = await launchRequestHandler.HandleRequest(input, session, logger);
+                    response = await launchRequestHandler.HandleRequest(input, currentState, session, logger);
+                    await mediaStateHelper.SaveMediaState(currentState);
                     break;
 
 
-                // Handle intent request
+                // handle intent request
                 case AlexaConstants.IntentRequest:
+                    intentRequestHandler = new IntentRequestHandler();
                     logger.LogLine($"[Function.FunctionHandler()] Directing request into {AlexaConstants.IntentRequest} handler");
-                    response = await intentRequestHandler.HandleRequest(input, session, logger);
+                    response = await intentRequestHandler.HandleRequest(input, currentState, session, logger);
                     break;
 
 
@@ -128,16 +145,15 @@ namespace ASMRDarling.API
                 //                    break;
 
 
-                // Handle default fallback case
+                // handle default fallback case
                 default:
                     logger.LogLine($"[Function.FunctionHandler()] Request was not recognized, directing request into the default case handler");
-                    var output = SsmlTemplate.FallbackSpeech();
+                    var output = SsmlTemplate.RequestFallbackSpeech();
                     response = ResponseBuilder.Ask(output, null);
                     break;
             }
 
-
-            // Return response
+            // return response back to alexa
             logger.LogLine($"[Function.FunctionHandler()] Response details: {JsonConvert.SerializeObject(response)}");
             return response;
         }

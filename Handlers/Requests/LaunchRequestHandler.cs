@@ -1,13 +1,12 @@
-﻿using System.Threading.Tasks;
-
-using Amazon.Lambda.Core;
-
+﻿using Amazon.Lambda.Core;
+using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-using ASMRDarling.API.Data;
+using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
+using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
@@ -17,7 +16,7 @@ namespace ASMRDarling.API.Handlers
     /// </summary>
     class LaunchRequestHandler : ILaunchRequestHandler
     {
-        public Task<SkillResponse> HandleRequest(SkillRequest input, Session session, ILambdaLogger logger)
+        public Task<SkillResponse> HandleRequest(SkillRequest input, MediaState currentState, Session session, ILambdaLogger logger)
         {
             return RequestProcessor.ProcessAlexaRequest("LaunchRequestHandler.HandleRequest()", "Launch Request", async () =>
             {
@@ -31,8 +30,14 @@ namespace ASMRDarling.API.Handlers
                 logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {userState}");
 
 
+
+                currentState.State.State = "MENU_MODE"; // or even a start mode is fine
+
+
+
+
                 // Get session display value, then set an output speech
-                bool ? hasDisplay = session.Attributes["has_display"] as bool?;
+                bool? hasDisplay = session.Attributes["has_display"] as bool?;
                 SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
 
                 if (hasDisplay == true)

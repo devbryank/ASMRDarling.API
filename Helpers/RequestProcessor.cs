@@ -5,7 +5,7 @@ using Amazon.Lambda.Core;
 
 using Alexa.NET;
 using Alexa.NET.Response;
-using ASMRDarling.API.Data;
+using ASMRDarling.API.Templates;
 
 namespace ASMRDarling.API.Helpers
 {
@@ -33,7 +33,7 @@ namespace ASMRDarling.API.Helpers
                 logger.LogLine($"[{funcName}] Unable to process the request");
                 logger.LogLine($"[{funcName}] Exception details: {ex}");
 
-                var output = SsmlTemplate.ExceptionSpeech();
+                var output = SsmlTemplate.FatalExceptionSpeech();
                 response = ResponseBuilder.Tell(output);
             }
 

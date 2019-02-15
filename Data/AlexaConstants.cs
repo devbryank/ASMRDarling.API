@@ -1,4 +1,4 @@
-﻿namespace ASMRDarling.API.Data
+﻿namespace ASMRDarling.API.Templates
 {
     /// <summary>
     /// This class contains a collection of Alexa constants

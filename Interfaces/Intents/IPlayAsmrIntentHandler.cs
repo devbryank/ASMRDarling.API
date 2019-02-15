@@ -1,4 +1,4 @@
 ﻿namespace ASMRDarling.API.Interfaces
 {
-    interface IPlayAsmrIntentHandler : IIntentHandler { }
+    internal interface IPlayAsmrIntentHandler : IIntentHandler { }
 }
