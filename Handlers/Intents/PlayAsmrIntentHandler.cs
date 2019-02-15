@@ -33,7 +33,7 @@ namespace ASMRDarling.API.Handlers
 
 
                 // Get slot values
-                Slot slot = intent.Slots[AlexaConstants.MediaItemSlot];
+                Slot slot = intent.Slots[AlexaRequestConstants.MediaItemSlot];
                 string slotValue = slot.Value;
                 logger.LogLine($"[PlayAsmrIntentHandler.HandleIntent()] Requested slot value (synonym): {slotValue}");
 

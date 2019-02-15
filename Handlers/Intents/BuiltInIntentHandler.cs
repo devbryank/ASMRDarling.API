@@ -51,21 +51,21 @@ namespace ASMRDarling.API.Handlers
 
 
                 // Direct intent into the appropriate handler
-                if (currentState.State.State != "MENU_MODE" || subIntentType.Equals(AlexaConstants.BuiltInHelp))
+                if (currentState.State.State != "MENU_MODE" || subIntentType.Equals(AlexaRequestConstants.BuiltInHelp))
                 {
                     switch (subIntentType)
                     {
                         // Handle help intent
-                        case AlexaConstants.BuiltInHelp:
-                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInHelp} response, type of {intent.Name}");
+                        case AlexaRequestConstants.BuiltInHelp:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaRequestConstants.BuiltInHelp} response, type of {intent.Name}");
                             output = SsmlTemplate.HelpSpeech();
                             response = ResponseBuilder.Ask(output, null, session);
                             break;
 
 
                         // Handle next intent
-                        case AlexaConstants.BuiltInNext:
-                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInNext} response, type of {intent.Name}");
+                        case AlexaRequestConstants.BuiltInNext:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaRequestConstants.BuiltInNext} response, type of {intent.Name}");
 
                             // Get next media item
                             MediaItem nextMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id + 1));
@@ -105,8 +105,8 @@ namespace ASMRDarling.API.Handlers
 
 
                         // Handle previous intent
-                        case AlexaConstants.BuiltInPrevious:
-                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaConstants.BuiltInPrevious} response, type of {intent.Name}");
+                        case AlexaRequestConstants.BuiltInPrevious:
+                            logger.LogLine($"[BuiltInIntentHandler.HandleIntent()] Generating a {AlexaRequestConstants.BuiltInPrevious} response, type of {intent.Name}");
 
                             // Get previous media item
                             MediaItem previousMediaItem = MediaItems.GetMediaItems().Find(m => m.Id.Equals(currentMediaItem.Id - 1));

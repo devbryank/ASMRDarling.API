@@ -66,15 +66,15 @@ namespace ASMRDarling.API.Handlers
                 switch (mainIntentType)
                 {
                     // Handle built in intent
-                    case AlexaConstants.BuiltIn:
-                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaConstants.BuiltIn} handler");
+                    case AlexaRequestConstants.BuiltIn:
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaRequestConstants.BuiltIn} handler");
                         response = await builtInIntentHandler.HandleIntent(intent, currentState, session, logger);
                         break;
 
 
                     // Handle play media intent
-                    case AlexaConstants.PlayASMR:
-                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaConstants.PlayASMR} handler");
+                    case AlexaRequestConstants.PlayASMR:
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaRequestConstants.PlayASMR} handler");
                         response = await playAsmrIntentHandler.HandleIntent(intent, currentState, session, logger);
                         break;
 

@@ -16,8 +16,4 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Templates\" />
-  </ItemGroup>
-
 </Project>

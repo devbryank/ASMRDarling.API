@@ -34,8 +34,8 @@ namespace ASMRDarling.API.Handlers
                 switch (suffix)
                 {
                     // handle user event request
-                    case AlexaConstants.UserEvent:
-                        logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Directing request into {AlexaConstants.UserEvent} handler");
+                    case AlexaRequestConstants.UserEvent:
+                        logger.LogLine($"[AlexaRequestHandler.HandleRequest()] Directing request into {AlexaRequestConstants.UserEvent} handler");
 
                         // get user event request
                         UserEventRequest userEventRequest = input.Request as UserEventRequest;
