@@ -3,7 +3,7 @@
 namespace ASMRDarling.API.Models
 {
     /// <summary>
-    /// This class contains a list of media items
+    /// collection of media items
     /// </summary>
     class MediaItems
     {
@@ -14,6 +14,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 1,
                     Title = "What is ASMR",
+                    Length = "0",
                     FileName = "whatisasmr",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/whatisasmr.mp3",
@@ -23,6 +24,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 2,
                     Title = "10 Triggers to Help You Sleep",
+                    Length = "0",
                     FileName = "10triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/10triggerstohelpyousleep.mp3",
@@ -32,6 +34,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 3,
                     Title = "20 Triggers to Help You Sleep",
+                    Length = "0",
                     FileName = "20triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/20triggerstohelpyousleep.mp3",
@@ -41,6 +44,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 4,
                     Title = "100 Triggers to Help You Sleep",
+                    Length = "0",
                     FileName = "100triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/100triggerstohelpyousleep.mp3",
@@ -50,6 +54,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 5,
                     Title = "A to Z Triggers to Help You Sleep",
+                    Length = "0",
                     FileName = "atoztriggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/atoztriggerstohelpyousleep.mp3",
@@ -59,6 +64,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 6,
                     Title = "Brushing the Microphone",
+                    Length = "0",
                     FileName = "brushingthemicrophone",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/brushingthemicrophone.mp3",
@@ -68,6 +74,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 7,
                     Title = "Relaxing Head Massage",
+                    Length = "0",
                     FileName = "relaxingheadmassage",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/relaxingheadmassage.mp3",
@@ -77,6 +84,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 8,
                     Title = "Relaxing Scalp Massage",
+                    Length = "0",
                     FileName = "relaxingscalpmassage",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/relaxingscalpmassage.mp3",
@@ -86,6 +94,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 9,
                     Title = "Whispered Tapping and Scratching",
+                    Length = "0",
                     FileName = "whisperedtappingandscratching",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/whisperedtappingandscratching.mp3",
@@ -95,6 +104,7 @@ namespace ASMRDarling.API.Models
                 new MediaItem() {
                     Id = 10,
                     Title = "Close Up Personal Attention For You to Sleep",
+                    Length = "0",
                     FileName = "closeuppersonalattentionforyoutosleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/closeuppersonalattentionforyoutosleep.mp3",

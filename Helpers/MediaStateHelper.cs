@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using ASMRDarling.API.Data;
 using ASMRDarling.API.Models;
-using ASMRDarling.API.Templates;
 
 namespace ASMRDarling.API.Helpers
 {
@@ -132,10 +131,11 @@ namespace ASMRDarling.API.Helpers
 
             // initialize user's media state if database is empty
             var initialState = new MediaState() { UserId = userId };
-            initialState.State = MediaConstants.SetDefaultState();
+            initialState.State = MediaStateConstants.SetDefaultState();
 
             logger.LogLine($"[MediaStateHelper.GetMediaState()] User's media state initialized");
             logger.LogLine($"[MediaStateHelper.GetMediaState()] Initialized media details: {JsonConvert.SerializeObject(initialState)}");
+
             return initialState;
         }
     }

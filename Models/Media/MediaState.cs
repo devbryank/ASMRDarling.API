@@ -13,15 +13,15 @@ namespace ASMRDarling.API.Models
 
     public class StateMap
     {
-        public string EnqueuedToken { get; set; }
         public int Index { get; set; }
         public bool Loop { get; set; }
+        public bool Shuffle { get; set; }
+        public string Token { get; set; }
+        public string EnqueuedToken { get; set; }
         public int OffsetInMS { get; set; }
         public bool PlaybackFinished { get; set; }
         public bool PlaybackIndexChanged { get; set; }
-        public List<int> playOrder { get; set; }
-        public bool Shuffle { get; set; }
+        public List<int> PlayOrder { get; set; }
         public string State { get; set; }
-        public string Token { get; set; }
     }
 }

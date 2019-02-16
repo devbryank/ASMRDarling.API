@@ -4,57 +4,36 @@ using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
+using ASMRDarling.API.Data;
 using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
-using ASMRDarling.API.Templates;
 using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {
     /// <summary>
-    /// This class processes the launch request
+    /// this class processes launch request
     /// </summary>
     class LaunchRequestHandler : ILaunchRequestHandler
     {
         public Task<SkillResponse> HandleRequest(SkillRequest input, MediaState currentState, Session session, ILambdaLogger logger)
         {
-            return RequestProcessor.ProcessAlexaRequest("LaunchRequestHandler.HandleRequest()", "Launch Request", async () =>
+            return RequestProcessHelper.ProcessAlexaRequest("[LaunchRequestHandler.HandleRequest()]", "Launch Request", async () =>
             {
-                // Get launch reqeust
+                SkillResponse response = new SkillResponse();
                 LaunchRequest launchRequest = input.Request as LaunchRequest;
 
+                currentState.State.State = UserStateConstants.Menu;
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {currentState.State.State}");
 
-                // Save user state
-                session.Attributes["user_state"] = UserStates.Menu;
-                string userState = session.Attributes["user_state"] as string;
-                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] User state updated to: {userState}");
-
-
-
-                currentState.State.State = "MENU_MODE"; // or even a start mode is fine
-
-
-
-
-                // Get session display value, then set an output speech
                 bool? hasDisplay = session.Attributes["has_display"] as bool?;
                 SsmlOutputSpeech output = SsmlTemplate.LaunchSpeech(hasDisplay);
+                response = ResponseBuilder.Ask(output, null);
 
-                if (hasDisplay == true)
-                {
-                    // If the device has a display interface
-                    logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial APL response");
+                logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial response");
+                response = hasDisplay == true ? await AplTemplate.MenuDisplay(response, logger) : response;
 
-                    // Get APL response then return
-                    SkillResponse response = ResponseBuilder.Ask(output, null, session);
-                    return await AplTemplate.MenuDisplay(response);
-                }
-                else
-                {
-                    // Audio only response
-                    logger.LogLine($"[LaunchRequestHandler.HandleRequest()] Generating initial audio only response");
-                    return ResponseBuilder.Ask(output, null, session);
-                }
+                return response;
 
             }, logger);
         }

@@ -1,4 +1,4 @@
-﻿namespace ASMRDarling.API.Templates
+﻿namespace ASMRDarling.API.Data
 {
     /// <summary>
     /// collection of alexa request & intent constants
@@ -23,10 +23,6 @@
         public const string PlayAsmr = "PlayASMR";
 
 
-        // slot constants
-        public const string MediaItemSlot = "MediaItemName";
-
-
         // sub built-in intent constants
         public const string BuiltInHelp = "HelpIntent";
         public const string BuiltInNext = "NextIntent";
@@ -38,5 +34,9 @@
 
         // sub alexa intent constants
         public const string UserEvent = "UserEvent";
+
+
+        // slot constants
+        public const string MediaItemSlot = "MediaItemName";
     }
 }

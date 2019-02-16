@@ -1,93 +1,72 @@
-﻿using System.Threading.Tasks;
-
-using Amazon.Lambda.Core;
-
+﻿using Amazon.Lambda.Core;
+using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
-using ASMRDarling.API.Templates;
+using ASMRDarling.API.Data;
+using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
 using ASMRDarling.API.Interfaces;
-using ASMRDarling.API.Models;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace ASMRDarling.API.Handlers
 {
     /// <summary>
-    /// This class processes the intent request
+    /// this class processes intent request
     /// </summary>
     class IntentRequestHandler : IIntentRequestHandler
     {
-        // Intent handlers
-        readonly IBuiltInIntentHandler builtInIntentHandler = new BuiltInIntentHandler();
-        readonly IPlayAsmrIntentHandler playAsmrIntentHandler = new PlayAsmrIntentHandler();
-
-
         public Task<SkillResponse> HandleRequest(SkillRequest input, MediaState currentState, Session session, ILambdaLogger logger)
         {
-            return RequestProcessor.ProcessAlexaRequest("[IntentRequestHandler.HandleRequest()]", "Intent Request", async () =>
+            return RequestProcessHelper.ProcessAlexaRequest("[IntentRequestHandler.HandleRequest()]", "Intent Request", async () =>
             {
-                // Get intent request
-                var request = input.Request as IntentRequest;
-
-
-                // Declare response components to return
-                Intent intent = request.Intent;
                 SkillResponse response = new SkillResponse();
                 SsmlOutputSpeech output = new SsmlOutputSpeech();
+                IntentRequest request = input.Request as IntentRequest;
+                Intent intent = request.Intent;
 
 
-                // Get intent type
+                // get main & sub intent types
                 string intentType = intent.Name;
                 string[] intentTypes = intent.Name.Split(".");
                 string mainIntentType = intentTypes[0];
                 string subIntentType = intentTypes.Length > 1 ? intentTypes[intentTypes.Length - 1] : null;
 
-                logger.LogLine($"[IntentRequestHandler.HandleRequest()] Main intent type: {mainIntentType}");
-
+                logger.LogLine($"[IntentRequestHandler.HandleRequest()] Main intent type: <{mainIntentType}>");
                 if (subIntentType != null)
-                    logger.LogLine($"[IntentRequestHandler.HandleRequest()] Sub intent type: {subIntentType} derived from {intentType}");
-
+                    logger.LogLine($"[IntentRequestHandler.HandleRequest()] Sub intent type: <{subIntentType}> derived from {intentType}");
                 session.Attributes["sub_intent"] = subIntentType;
 
 
-
-                currentState.State.playOrder = new List<int> { 0, 1, 2, 3, 4 };//??????????????
-
-
-                //returnResponse = ResponseBuilder.AudioPlayerPlay(
-                //    PlayBehavior.ReplaceAll,
-                //    audioItems[currentState.State.Index].Url,
-                //    currentState.State.Token);
-
-                // Direct intent into the appropriate handler
+                // direct intent into an appropriate handler
                 switch (mainIntentType)
                 {
-                    // Handle built in intent
+                    // handle built-in intent
                     case AlexaRequestConstants.BuiltIn:
+                        IBuiltInIntentHandler builtInIntentHandler = new BuiltInIntentHandler();
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaRequestConstants.BuiltIn} handler");
                         response = await builtInIntentHandler.HandleIntent(intent, currentState, session, logger);
                         break;
 
 
-                    // Handle play media intent
-                    case AlexaRequestConstants.PlayASMR:
-                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaRequestConstants.PlayASMR} handler");
+                    // handle play asmr intent
+                    case AlexaRequestConstants.PlayAsmr:
+                        IPlayAsmrIntentHandler playAsmrIntentHandler = new PlayAsmrIntentHandler();
+                        logger.LogLine($"[IntentRequestHandler.HandleRequest()] Directing intent into {AlexaRequestConstants.PlayAsmr} handler");
                         response = await playAsmrIntentHandler.HandleIntent(intent, currentState, session, logger);
                         break;
 
 
-                    // Handle default fallback case
+                    // handle default fallback case
                     default:
                         logger.LogLine($"[IntentRequestHandler.HandleRequest()] Intent was not recognized, directing intent into the default case handler");
                         output = SsmlTemplate.RequestFallbackSpeech();
-                        response = ResponseBuilder.Tell(output);
+                        response = ResponseBuilder.Ask(output, null);
                         break;
                 }
 
-                // Return response
+
+                // return response back to function handler
                 return response;
 
             }, logger);

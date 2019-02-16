@@ -1,9 +1,9 @@
 ﻿using Alexa.NET.Response;
 
-namespace ASMRDarling.API.Templates
+namespace ASMRDarling.API.Data
 {
     /// <summary>
-    /// this class contains a list of preset ssml speeches
+    /// collection of preset ssml speeches
     /// </summary>
     static class SsmlTemplate
     {
@@ -74,10 +74,10 @@ namespace ASMRDarling.API.Templates
                                        "</speak>";
 
 
-        // when request is not recognized, ending the skill session
+        // when request is not recognized, asking for other options
         const string NotSupportedSpeech = "<speak>" +
                                                "<p>Sorry, I didn't get your request.</p>" +
-                                               "<p>Please try again later.</p>" +
+                                               "<p>Please say help, or play followed by name of the media.</p>" +
                                           "</speak>";
 
 

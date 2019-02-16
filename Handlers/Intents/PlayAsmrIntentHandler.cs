@@ -8,7 +8,7 @@ using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using ASMRDarling.API.Helpers;
-using ASMRDarling.API.Templates;
+using ASMRDarling.API.Data;
 using ASMRDarling.API.Interfaces;
 using ASMRDarling.API.Models;
 
@@ -21,7 +21,7 @@ namespace ASMRDarling.API.Handlers
     {
         public Task<SkillResponse> HandleIntent(Intent intent, MediaState currentState, Session session, ILambdaLogger logger)
         {
-            return RequestProcessor.ProcessAlexaRequest("PlayAsmrIntentHandler.HandleIntent()", "Play ASMR Intent", async () =>
+            return RequestProcessHelper.ProcessAlexaRequest("PlayAsmrIntentHandler.HandleIntent()", "Play ASMR Intent", async () =>
             {
                 SkillResponse response = new SkillResponse();
 
@@ -62,7 +62,7 @@ namespace ASMRDarling.API.Handlers
 
 
                 // Get file source url
-                string url = UrlBuilder.GetS3FileSourceUrl(fileName, fileType);
+                string url = UrlHelper.GetMediaSourceUrl(fileName, fileType);
                 logger.LogLine($"[PlayAsmrIntentHandler.HandleIntent()] Media file source URL: {url}");
 
 

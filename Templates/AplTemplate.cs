@@ -1,64 +1,88 @@
-﻿
-
-
-//UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using Alexa.NET.Response;
 using Alexa.NET.Response.APL;
 using Alexa.NET.APL.Commands;
 using Alexa.NET.APL.Components;
 using ASMRDarling.API.Models;
+using ASMRDarling.API.Helpers;
+using Amazon.Lambda.Core;
 
-namespace ASMRDarling.API.Templates
+namespace ASMRDarling.API.Data
 {
-#warning need to be updated & refactored
-
     /// <summary>
     /// 
     /// </summary>
     class AplTemplate
     {
-        // image properties
-        static string imageWidth = "50vw";
-        static string imageHeight = "40vh";
-        static string imagePaddingBottom = "5vh";
-
-        // font properties
-        static string mediaNameFontSize = "30dp";
-        static string mediaNameFontColor = "black";
-
-
-        // menu display layout generation start
-        public static async Task<SkillResponse> MenuDisplay(SkillResponse response)
+        public static async Task<SkillResponse> MenuDisplay(SkillResponse response, ILambdaLogger logger)
         {
+            string top = DisplayHelper.GetHeight(0.15f);
+            string size = DisplayHelper.GetHeight(0.7f);
+            string spacing = DisplayHelper.GetWidth(0.08f);
+
+
             // generate a touch wrapped thumbnail array
-            var thumbnails = GetTouchWrappedThumbnails(MediaItems.GetMediaItems());
+            List<MediaItem> mediaItems = MediaItems.GetMediaItems();
+            logger.LogLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+            int mediaItemsSize = mediaItems.Count;
+            int containerSize = (mediaItemsSize % 3) == 0 ? mediaItemsSize / 3 : (mediaItemsSize / 3) + 1;
+
+            Container[] containers = new Container[containerSize];
+
+
+
+
+            logger.LogLine($"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB      {containers}");
+
+            Sequence sequence = new Sequence
+            {
+                Width = DisplayHelper.GetWidth(1f),
+                Height = DisplayHelper.GetWidth(1f),
+                Position = "absolute",
+                ScrollDirection = "horizontal"
+            };
+
+
+            for (int i = 0; i < containerSize; i++)
+            {
+                logger.LogLine($"CCCCCCCCCCCCCCCCCCCCCCCCCCC      {containerSize}");
+
+                List<APLComponent> containerItems = new List<APLComponent>();
+                containers[i] = new Container();
+                containers[i].Width = DisplayHelper.GetWidth(0.5f);
+                containers[i].Height = DisplayHelper.GetHeight(1f);
+                containers[i].Direction = "column";
+
+                for (int j = 0; j < 3; j++)
+                {
+                    var wrappedItem = GetTouchWrappedItem(mediaItems[j + i + i]);
+
+                    containerItems.Add(wrappedItem);
+                    containers[i].Items = containerItems;
+
+                }
+            }
+
+            List<APLComponent> sequenceItems = new List<APLComponent>();
+
+            for (int i = 0; i < containers.Length; i++)
+            {
+                sequenceItems.Add(containers[i]);
+            }
+
+            sequence.Items = sequenceItems;
 
             var mainLayout = new Layout(
                                 new Frame(
-                                    new Container(
-                                        new Sequence(thumbnails) { Width = imageWidth, Height = "100vh" }
-                                    )
-                                    { Width = "100vw", Height = "100vh", AlignItems = "center", JustifyContent = "center" } // end of container
+                                   sequence
                                 )
-                                { Width = "100vw", Height = "100vh", BackgroundColor = "white" } // end of frame
-                             ); // end of layout
+                                { Width = DisplayHelper.GetWidth(1f), Height = DisplayHelper.GetHeight(1f), BackgroundColor = "black" }
+                             );
+
+
+
 
             // make a rendering response
             var renderDocument = new RenderDocumentDirective
@@ -102,31 +126,29 @@ namespace ASMRDarling.API.Templates
 
 
         // get touch wrapped apl thumbnails
-        protected static IEnumerable<APLComponent> GetTouchWrappedThumbnails(List<MediaItem> mediaItemList)
+        protected static APLComponent GetTouchWrappedItem(MediaItem mediaItem)
         {
-            TouchWrapper[] touchWrappers = new TouchWrapper[mediaItemList.Count];
-
-            for (int i = 0; i < mediaItemList.Count; i++)
+            TouchWrapper touchWrapper = new TouchWrapper(
+                                            new Container(
+                                                new Image(mediaItem.Thumbnail)
+                                                { Width = DisplayHelper.GetWidth(0.3f), Height = DisplayHelper.GetHeight(0.3f), AlignSelf = "center" },
+                                                new Text(mediaItem.Title)
+                                                { Color = "white", FontSize = "24dp", TextAlign = "center", MaxLines = 1, Height = "30px" }
+                                            )
+                                            { Width = DisplayHelper.GetWidth(0.25f), Height = DisplayHelper.GetHeight(0.4f), Direction = "column", AlignItems = "center", Spacing = DisplayHelper.GetHeight(0.1f) }
+                                        )
             {
-                var mediaItem = mediaItemList[i];
-
-                touchWrappers[i] = new TouchWrapper
-                (
-                    new Image(mediaItem.Thumbnail) { Width = imageWidth, Height = imageHeight },
-                    new Text($"({ mediaItem.Id }) { mediaItem.Title }") { Color = mediaNameFontColor, FontSize = mediaNameFontSize, TextAlign = "center", PaddingBottom = imagePaddingBottom }
-                )
+                OnPress = new SendEvent
                 {
-                    OnPress = new SendEvent
-                    {
-                        Arguments = new List<string> {
-                            mediaItem.Title,
-                            mediaItem.VideoSource
-                        }
-                    }
-                };
-            }
+                    Arguments = new List<string> {
+                                                        mediaItem.Title,
+                                                        mediaItem.VideoSource
+                                                    }
+                }
+            };
 
-            return touchWrappers;
+
+            return touchWrapper;
         }
     }
 }

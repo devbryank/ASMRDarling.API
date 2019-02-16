@@ -1,12 +1,10 @@
-﻿using Alexa.NET.Request;
-using Alexa.NET.Response;
-using Amazon.Lambda.Core;
-using ASMRDarling.API.Interfaces;
-using ASMRDarling.API.Models;
+﻿using Amazon.Lambda.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Alexa.NET.Request;
+using Alexa.NET.Response;
+using ASMRDarling.API.Models;
+using ASMRDarling.API.Interfaces;
 
 namespace ASMRDarling.API.Handlers
 {

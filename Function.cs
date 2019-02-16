@@ -8,7 +8,7 @@ using Alexa.NET.Response;
 using ASMRDarling.API.Models;
 using ASMRDarling.API.Helpers;
 using ASMRDarling.API.Handlers;
-using ASMRDarling.API.Templates;
+using ASMRDarling.API.Data;
 using ASMRDarling.API.Interfaces;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -21,11 +21,28 @@ namespace ASMRDarling.API
     public class Function
     {
         // handle request from alexa
-        public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
+        public async Task<SkillResponse> FunctionHandler(APLSkillRequest input, ILambdaContext context)
         {
+            Skill.Input = input;
             SkillResponse response = new SkillResponse();
             new UserEventRequestHandler().AddToRequestConverter();
+
+#warning need to be implemented to catch exception requests
             //new SystemExceptionEncounteredRequestTypeConverter().AddToRequestConverter();
+
+
+            try
+            {
+                if (Skill.IsRound)
+                {
+                    DisplayHelper.BaseDeviceHeight = 480f;
+                }
+                else
+                {
+                    DisplayHelper.BaseDeviceHeight = 1080f;
+                }
+            }
+            catch { }
 
 
             // start logging
@@ -125,6 +142,7 @@ namespace ASMRDarling.API
                     response = await sessionEndedRequestHandler.HandleRequest(input, currentState, session, logger);
                     break;
 
+
 #warning request converter should be implemented first to direct the request into this case
                 // handle system exception request
                 case AlexaRequestConstants.System:
@@ -147,6 +165,15 @@ namespace ASMRDarling.API
             logger.LogLine($"[Function.FunctionHandler()] Response details: {JsonConvert.SerializeObject(response)}");
 
             await mediaStateHelper.SaveMediaState(currentState);
+
+            try
+            {
+                response.SessionAttributes = input.Session.Attributes;
+            }
+            catch { }
+
+
+
             return response;
         }
     }

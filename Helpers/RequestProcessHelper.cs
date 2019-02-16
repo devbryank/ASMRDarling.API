@@ -1,27 +1,22 @@
-﻿using System;
+﻿using Amazon.Lambda.Core;
+using System;
 using System.Threading.Tasks;
-
-using Amazon.Lambda.Core;
-
 using Alexa.NET;
 using Alexa.NET.Response;
-using ASMRDarling.API.Templates;
+using ASMRDarling.API.Data;
 
 namespace ASMRDarling.API.Helpers
 {
     /// <summary>
-    /// This class processes the incoming request from Alexa with
-    /// an appropriate exception handling & logging method
+    /// request process wrapper to log exceptions
     /// </summary>
-    class RequestProcessor
+    class RequestProcessHelper
     {
         public static async Task<SkillResponse> ProcessAlexaRequest(string funcName, string taskName, Func<Task<SkillResponse>> handler, ILambdaLogger logger)
         {
             SkillResponse response = new SkillResponse();
             logger.LogLine($"[{funcName}] {taskName} handling started");
 
-
-            // Process the request
             try
             {
                 logger.LogLine($"[{funcName}] Processing {taskName} in progress");
@@ -37,7 +32,6 @@ namespace ASMRDarling.API.Helpers
                 response = ResponseBuilder.Tell(output);
             }
 
-            // Return response
             return response;
         }
     }
