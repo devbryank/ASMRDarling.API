@@ -7,7 +7,12 @@ namespace Sonnar.Core
     {
         SkillResponse response;
 
-        public Response() { Init(); }
+
+        public Response()
+        {
+            Init();
+        }
+
 
         void Init()
         {
@@ -15,6 +20,10 @@ namespace Sonnar.Core
             response = ResponseBuilder.Empty();
         }
 
-        public SkillResponse Build() { return response; }
+
+        public SkillResponse Build()
+        {
+            return response;
+        }
     }
 }

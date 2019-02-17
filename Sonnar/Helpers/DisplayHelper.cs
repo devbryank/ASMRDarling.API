@@ -12,6 +12,7 @@ namespace Sonnar.Helpers
         static AlexaViewport viewPort = Core.Core.Device.ViewPort;
         public static float BaseDeviceHeight { get; set; } = 1080f;
 
+
         public static APLComponent MergeIntoPages(string id, params APLComponent[] components)
         {
             Pager pager = new Pager() { Height = GetHeight(1f), Width = GetWidth(1f) };
@@ -28,6 +29,7 @@ namespace Sonnar.Helpers
 
             return pager;
         }
+
 
         public static RenderDocumentDirective GenerateDirective(string token, params APLComponent[] components)
         {
@@ -48,15 +50,18 @@ namespace Sonnar.Helpers
             return directive;
         }
 
+
         public static string GetWidth(float percentage)
         {
             return Math.Round(percentage * viewPort.PixelWidth) + "px";
         }
 
+
         public static string GetHeight(float percentage)
         {
             return Math.Round(percentage * viewPort.PixelHeight) + "px";
         }
+
 
         public static string GetWidth(float imageWidth, float imageHeight)
         {
@@ -66,21 +71,25 @@ namespace Sonnar.Helpers
             return Math.Round(widthToHeight * scaledImageHeight) + "px";
         }
 
+
         public static string GetHeight(float imageWidth, float imageHeight)
         {
             float ratio = imageHeight / BaseDeviceHeight;
             return GetHeight(ratio);
         }
 
+
         public static int GetPixelHeight(float percentage)
         {
             return (int)Math.Round(percentage * viewPort.PixelHeight);
         }
 
+
         public static int GetPixelWidth(float percentage)
         {
             return (int)Math.Round(percentage * viewPort.PixelWidth);
         }
+
 
         public static int GetPixelWidth(float imageWidth, float imageHeight)
         {
@@ -89,6 +98,7 @@ namespace Sonnar.Helpers
             float widthToHeight = imageWidth / imageHeight;
             return (int)Math.Round(widthToHeight * scaledImageHeight);
         }
+
 
         public static int GetPixelHeight(float imageWidth, float imageHeight)
         {

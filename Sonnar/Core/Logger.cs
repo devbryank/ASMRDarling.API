@@ -6,10 +6,22 @@ namespace Sonnar.Core
     {
         ILambdaLogger logger;
 
-        public Logger() { Init(); }
 
-        void Init() { logger = Core.Context.Logger; }
+        public Logger()
+        {
+            Init();
+        }
 
-        public void Write(string log) { logger.LogLine(log); }
+
+        void Init()
+        {
+            logger = Core.Context.Logger;
+        }
+
+
+        public void Write(string log)
+        {
+            logger.LogLine(log);
+        }
     }
 }

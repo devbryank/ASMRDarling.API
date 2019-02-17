@@ -12,6 +12,7 @@ namespace Sonnar.Core
         public static Device Device;
         public static Response Response;
 
+
         public static void Init(APLSkillRequest input, ILambdaContext context)
         {
             Input = input;

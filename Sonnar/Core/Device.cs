@@ -9,9 +9,18 @@ namespace Sonnar.Core
     {
         APLSkillRequest input;
 
-        public Device() { Init(); }
 
-        void Init() { input = Core.Input; }
+        public Device()
+        {
+            Init();
+        }
+
+
+        void Init()
+        {
+            input = Core.Input;
+        }
+
 
         public bool IsRound
         {
@@ -28,6 +37,7 @@ namespace Sonnar.Core
             }
         }
 
+
         public bool HasScreen
         {
             get
@@ -42,6 +52,7 @@ namespace Sonnar.Core
                 }
             }
         }
+
 
         public AlexaViewport ViewPort
         {

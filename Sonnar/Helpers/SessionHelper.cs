@@ -9,6 +9,7 @@ namespace Sonnar.Helpers
     {
         static Session session = Core.Core.Input.Session;
 
+
         public static void Set(string key, object val)
         {
             if (session == null)
@@ -32,6 +33,7 @@ namespace Sonnar.Helpers
             }
         }
 
+
         public static T Get<T>(string key)
         {
             if (session.Attributes.ContainsKey(key))
@@ -44,6 +46,7 @@ namespace Sonnar.Helpers
                 throw new NullReferenceException("The given key " + key + " does not exist in the session attribute.");
             }
         }
+
 
         public static bool Contains(string key)
         {
