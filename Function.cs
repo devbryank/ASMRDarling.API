@@ -2,22 +2,23 @@ using Amazon.Lambda.Core;
 using System.Threading.Tasks;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
+using Sonnar.Core;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace ASMRDarling.API
 {
-    /// <summary>
-    /// entry point of the lambda function
-    /// </summary>
-    public class Function
+    public class Function : Core
     {
-        // handle request from alexa
         public async Task<SkillResponse> FunctionHandler(APLSkillRequest input, ILambdaContext context)
         {
-           
+            new UserEventRequestHandler().AddToRequestConverter();
+            //new SystemExceptionEncounteredRequestTypeConverter().AddToRequestConverter();
 
-            return response;
+            Init(input, context);
+            Logger.Write($"{Device.ViewPort}");
+
+            return Response.Build();
         }
     }
 }
