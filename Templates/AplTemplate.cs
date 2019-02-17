@@ -17,6 +17,17 @@ namespace ASMRDarling.API.Data
     {
         public static async Task<SkillResponse> MenuDisplay(SkillResponse response, ILambdaLogger logger)
         {
+
+            if (Skill.IsRound)
+            {
+                //AddSpotContents();
+            }
+            else
+            {
+                //AddShowContents();
+            }
+
+
             string top = DisplayHelper.GetHeight(0.15f);
             string size = DisplayHelper.GetHeight(0.7f);
             string spacing = DisplayHelper.GetWidth(0.08f);
@@ -39,7 +50,7 @@ namespace ASMRDarling.API.Data
             Sequence sequence = new Sequence
             {
                 Width = DisplayHelper.GetWidth(1f),
-                Height = DisplayHelper.GetWidth(1f),
+                Height = DisplayHelper.GetHeight(1f),
                 Position = "absolute",
                 ScrollDirection = "horizontal"
             };
@@ -47,22 +58,32 @@ namespace ASMRDarling.API.Data
 
             for (int i = 0; i < containerSize; i++)
             {
-                logger.LogLine($"CCCCCCCCCCCCCCCCCCCCCCCCCCC      {containerSize}");
 
-                List<APLComponent> containerItems = new List<APLComponent>();
-                containers[i] = new Container();
-                containers[i].Width = DisplayHelper.GetWidth(0.5f);
-                containers[i].Height = DisplayHelper.GetHeight(1f);
-                containers[i].Direction = "column";
+
+                List<APLComponent> containerItems = new List<APLComponent>
+                {
+                    new Container()
+                };
+
+                containers[i] = new Container
+                {
+                    Width = DisplayHelper.GetWidth(1f),
+                    Height = DisplayHelper.GetHeight(1f),
+                    Direction = "column"
+                };
 
                 for (int j = 0; j < 3; j++)
                 {
-                    var wrappedItem = GetTouchWrappedItem(mediaItems[j + i + i]);
+                    if ((j + i * 3) < mediaItems.Count)
+                    {
+                        var wrappedItem = GetTouchWrappedItem(mediaItems[j + i + i + i]);
 
-                    containerItems.Add(wrappedItem);
-                    containers[i].Items = containerItems;
+                        containerItems.Add(wrappedItem);
+                    }
 
                 }
+                containers[i].Items = containerItems;
+
             }
 
             List<APLComponent> sequenceItems = new List<APLComponent>();
@@ -131,11 +152,11 @@ namespace ASMRDarling.API.Data
             TouchWrapper touchWrapper = new TouchWrapper(
                                             new Container(
                                                 new Image(mediaItem.Thumbnail)
-                                                { Width = DisplayHelper.GetWidth(0.3f), Height = DisplayHelper.GetHeight(0.3f), AlignSelf = "center" },
+                                                { Width = DisplayHelper.GetWidth(0.1f, 0.1f), Height = DisplayHelper.GetHeight(0.1f, 0.1f), AlignSelf = "center" },
                                                 new Text(mediaItem.Title)
-                                                { Color = "white", FontSize = "24dp", TextAlign = "center", MaxLines = 1, Height = "30px" }
+                                                { Color = "white", FontSize = "24dp", TextAlign = "center", MaxLines = 1, Height = DisplayHelper.GetHeight(0.1f) }
                                             )
-                                            { Width = DisplayHelper.GetWidth(0.25f), Height = DisplayHelper.GetHeight(0.4f), Direction = "column", AlignItems = "center", Spacing = DisplayHelper.GetHeight(0.1f) }
+                                            { Width = DisplayHelper.GetWidth(0.5f), Height = DisplayHelper.GetHeight(0.25f), Direction = "column", AlignItems = "center", Spacing = DisplayHelper.GetWidth(0.1f) }
                                         )
             {
                 OnPress = new SendEvent
@@ -143,7 +164,7 @@ namespace ASMRDarling.API.Data
                     Arguments = new List<string> {
                                                         mediaItem.Title,
                                                         mediaItem.VideoSource
-                                                    }
+    }
                 }
             };
 

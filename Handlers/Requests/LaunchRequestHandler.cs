@@ -20,7 +20,7 @@ namespace ASMRDarling.API.Handlers
         {
             return RequestProcessHelper.ProcessAlexaRequest("[LaunchRequestHandler.HandleRequest()]", "Launch Request", async () =>
             {
-                SkillResponse response = new SkillResponse();
+                SkillResponse response = ResponseBuilder.Empty();
                 LaunchRequest launchRequest = input.Request as LaunchRequest;
 
                 currentState.State.State = UserStateConstants.Menu;

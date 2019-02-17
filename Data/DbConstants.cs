@@ -10,7 +10,7 @@
         public const string MediaStatesTableName = "MediaStates";
 
         // database credentials
-        public const string DbAccessKey = "";
-        public const string DbSecretKey = "";
+        public const string DbAccessKey = "AKIAJOMVNVDUCK3GWQPQ";
+        public const string DbSecretKey = "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";
     }
 }

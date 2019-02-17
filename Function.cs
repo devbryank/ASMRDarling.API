@@ -24,13 +24,12 @@ namespace ASMRDarling.API
         public async Task<SkillResponse> FunctionHandler(APLSkillRequest input, ILambdaContext context)
         {
             Skill.Input = input;
-            SkillResponse response = new SkillResponse();
+            SkillResponse response = ResponseBuilder.Empty();
             new UserEventRequestHandler().AddToRequestConverter();
 
-#warning need to be implemented to catch exception requests
             //new SystemExceptionEncounteredRequestTypeConverter().AddToRequestConverter();
 
-
+         
             try
             {
                 if (Skill.IsRound)
