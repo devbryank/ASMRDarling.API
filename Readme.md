@@ -38,12 +38,12 @@ If already installed check if new version is available.
 
 Execute unit tests
 ```
-    cd "ASMRDarling.API/test/ASMRDarling.API.Tests"
+    cd "AsmrDarlingAlexaSkill/test/AsmrDarlingAlexaSkill.Tests"
     dotnet test
 ```
 
 Deploy function to AWS Lambda
 ```
-    cd "ASMRDarling.API/src/ASMRDarling.API"
+    cd "AsmrDarlingAlexaSkill/src/AsmrDarlingAlexaSkill"
     dotnet lambda deploy-function
 ```
