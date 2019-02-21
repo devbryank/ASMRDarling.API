@@ -27,7 +27,7 @@ namespace Sonnar.Handlers
                 ProgressiveResponse progressiveResponse = new ProgressiveResponse(Core.Request.GetRequest());
 
                 // prevent user to enter if not on play mode, help and stop can be processed
-                if (Core.State.UserState.State != "MENU_MODE" || subIntentType.Equals(AlexaRequests.BuiltInHelp) || subIntentType.Equals(AlexaRequests.BuiltInStop))
+                if (Core.State.UserState.State != "MENU_MODE" || subIntentType.Equals(AlexaRequests.BuiltInHelp) || subIntentType.Equals(AlexaRequests.BuiltInStop) || subIntentType.Equals(AlexaRequests.BuiltInRepeat))
                 {
                     switch (subIntentType)
                     {
@@ -40,7 +40,7 @@ namespace Sonnar.Handlers
 
                         // handle next intent
                         case AlexaRequests.BuiltInNext:
-                            MediaItem nextMediaItem = mediaItems.Find(m => m.Id.Equals(currentMediaIndex++));
+                            MediaItem nextMediaItem = mediaItems.Find(m => m.Id.Equals(currentMediaIndex + 1));
 
                             if (nextMediaItem != null)
                             {
@@ -63,30 +63,36 @@ namespace Sonnar.Handlers
 
                         // handle previous intent
                         case AlexaRequests.BuiltInPrevious:
-                            MediaItem previousMediaItem = mediaItems.Find(m => m.Id.Equals(currentMediaIndex--));
+                            MediaItem previousMediaItem = mediaItems.Find(m => m.Id.Equals(currentMediaIndex - 1));
                             Core.State.UserState.State = "PLAY_MODE";
-
-                            if (previousMediaItem != null)
+                            if (!Core.Device.HasScreen)
                             {
-                                await progressiveResponse.SendSpeech($"Playing previous media item, {previousMediaItem.Title}. ");
-                                Core.Logger.Write("BuiltInIntentHandler.HandleRequest()", $"Previous media item name: {previousMediaItem.Title}");
+                                if (previousMediaItem != null)
+                                {
+                                    await progressiveResponse.SendSpeech($"Playing previous media item, {previousMediaItem.Title}. ");
+                                    Core.Logger.Write("BuiltInIntentHandler.HandleRequest()", $"Previous media item name: {previousMediaItem.Title}");
 
-                                Core.State.UserState.Index = previousMediaItem.Id;
-                                Core.State.UserState.Token = previousMediaItem.FileName;
-                                Core.State.UserState.OffsetInMS = 0;
+                                    Core.State.UserState.Index = previousMediaItem.Id;
+                                    Core.State.UserState.Token = previousMediaItem.FileName;
+                                    Core.State.UserState.OffsetInMS = 0;
 
-                                Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
+                                    Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, previousMediaItem.AudioSource, previousMediaItem.FileName);
+                                }
+                                else
+                                {
+                                    Core.Logger.Write("BuiltInIntentHandler.HandleRequest()", "Previous media item is not available");
+                                    Core.Response.SetAskSpeech(SpeechTemplate.NoPrevious);
+                                }
                             }
                             else
                             {
-                                Core.Logger.Write("BuiltInIntentHandler.HandleRequest()", "Previous media item is not available");
-                                Core.Response.SetAskSpeech(SpeechTemplate.NoNext);
+                                Core.Response.SetAskSpeech(SpeechTemplate.NotUnderstand + SpeechTemplate.MoreOptions);
                             }
                             break;
 
                         // handle resume intent
                         case AlexaRequests.BuiltInResume:
-                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, currentMediaItem.AudioSource, null, Core.State.UserState.Token, Core.State.UserState.OffsetInMS);
+                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, currentMediaItem.AudioSource, Core.State.UserState.Token, Core.State.UserState.OffsetInMS);
                             Core.State.UserState.State = "PLAY_MODE";
 
                             if (Core.State.UserState.EnqueuedToken != null)
@@ -118,6 +124,7 @@ namespace Sonnar.Handlers
 
                         // handle pause intent
                         case AlexaRequests.BuiltInPause:
+                            await progressiveResponse.SendSpeech("See you soon. ");
                             Core.State.UserState.OffsetInMS = Convert.ToInt32(Core.Request.GetRequest().Context.AudioPlayer.OffsetInMilliseconds);
                             Core.State.UserState.OffsetInMS = Convert.ToInt32(Core.Request.GetRequest().Context.AudioPlayer.OffsetInMilliseconds);
                             Core.State.UserState.Token = Core.Request.GetRequest().Context.AudioPlayer.Token;
@@ -128,18 +135,31 @@ namespace Sonnar.Handlers
 
                         // handle stop intent
                         case AlexaRequests.BuiltInStop:
-                            string activity = SessionHelper.Get<string>("audio_activity");
-                            if (!activity.Equals("IDLE"))
-                                Core.Response.StopAudioPlayer();
+                            try
+                            {
+                                string activity = SessionHelper.Get<string>("audio_activity");
+                                if (!activity.Equals("IDLE"))
+                                    Core.Response.StopAudioPlayer();
+                            }
+                            catch { }
+
+                            Core.Response.SetTellSpeech(SpeechTemplate.SeeYouSoon);
                             Core.State.UserState.State = "PAUSE_MODE";
                             break;
 
                         // handle repeat intent
                         case AlexaRequests.BuiltInRepeat:
-                            Core.State.UserState.Token = currentMediaItem.Title;
-                            Core.State.UserState.OffsetInMS = 0;
-                            Core.State.UserState.State = "PLAY_MODE";
-                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, currentMediaItem.AudioSource, null, currentMediaItem.Title, 0);
+                            if (Core.State.UserState.State.Equals("MENU_MODE"))
+                            {
+                                Core.Response.SetAskSpeech(SpeechTemplate.Intro);
+                            }
+                            else if (Core.State.UserState.State.Equals("PLAY_MODE") || Core.State.UserState.State.Equals("PAUSE_MODE"))
+                            {
+                                Core.State.UserState.Token = currentMediaItem.Title;
+                                Core.State.UserState.OffsetInMS = 0;
+                                Core.State.UserState.State = "PLAY_MODE";
+                                Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, currentMediaItem.AudioSource, currentMediaItem.Title, 0);
+                            }
                             break;
 
                         // handle loop on intent
@@ -171,7 +191,7 @@ namespace Sonnar.Handlers
                             Core.State.UserState.Token = mediaItems[0].Title;
                             Core.State.UserState.OffsetInMS = 0;
                             Core.State.UserState.State = "PLAY_MODE";
-                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, mediaItems[0].AudioSource, null, mediaItems[0].Title, 0);
+                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, mediaItems[0].AudioSource, mediaItems[0].Title, 0);
                             break;
 
                         // handle fallback intent

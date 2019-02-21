@@ -28,7 +28,7 @@ namespace Sonnar.Components
         {
             Core.Logger.Write("Database.Database()", "Connecting to the database");
             UserId = userId;
-            BasicAWSCredentials credentials = new BasicAWSCredentials(SkillSettings.DbAccessKey, SkillSettings.DbSecretKey);
+            BasicAWSCredentials credentials = new BasicAWSCredentials(Environment.GetEnvironmentVariable("DbAccessKey"), Environment.GetEnvironmentVariable("DbSecretKey"));
             Client = new AmazonDynamoDBClient(credentials, RegionEndpoint.USEast1);
         }
 

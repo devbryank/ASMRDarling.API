@@ -9,7 +9,7 @@ namespace Sonnar.Components
 {
     class Response
     {
-        public SkillResponse Skill { get; set; }
+        protected SkillResponse Skill { get; private set; }
 
 
         public Response()
@@ -43,12 +43,21 @@ namespace Sonnar.Components
 
         public void AddAudioPlayer(PlayBehavior behavior, string url, string token)
         {
+            RemoveDirective();
             Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, token);
+        }
+
+
+        public void AddAudioPlayer(PlayBehavior behavior, string url, string token, int offset)
+        {
+            RemoveDirective();
+            Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, token, offset);
         }
 
 
         public void AddAudioPlayer(PlayBehavior behavior, string url, string enqueuedToken, string token, int offset)
         {
+            RemoveDirective();
             Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, enqueuedToken, token, offset);
         }
 
@@ -92,7 +101,26 @@ namespace Sonnar.Components
 
         public void AddDirective(IDirective directive)
         {
+            RemoveDirective();
             Skill.Response.Directives.Add(directive);
+        }
+
+
+        public void RemoveDirective()
+        {
+            if (Skill.Response.Directives == null)
+            {
+                return;
+            }
+
+            List<IDirective> newDirectives = new List<IDirective>();
+            foreach (var directive in Skill.Response.Directives)
+            {
+                if (directive.GetType() != typeof(RenderDocumentDirective) && directive.GetType() != typeof(ExecuteCommandsDirective) && directive.GetType() != typeof(AudioPlayerPlayDirective))
+                    newDirectives.Add(directive);
+            }
+
+            Skill.Response.Directives = newDirectives;
         }
 
 

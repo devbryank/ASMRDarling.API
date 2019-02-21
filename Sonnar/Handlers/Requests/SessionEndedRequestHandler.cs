@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 
+using Sonnar.Helpers;
+using Sonnar.Components;
 using Sonnar.Interfaces;
 
 namespace Sonnar.Handlers
@@ -8,7 +10,10 @@ namespace Sonnar.Handlers
     {
         public async Task HandleRequest()
         {
-            throw new System.NotImplementedException();
+            await RequestProcessHelper.ProcessRequest("SessionEndedRequestHandler.HandleRequest()", "Session Ended Request", async () =>
+            {
+                Core.Logger.Write("SessionEndedRequestHandler.HandleRequest()", "Session eneded");
+            });
         }
     }
 }

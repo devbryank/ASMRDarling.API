@@ -10,9 +10,9 @@ namespace Sonnar.Models
             {
                 new MediaItem() {
                     Id = 1,
-                    Views = 0,
+                    Views = "3.1M",
                     Title = "What is ASMR",
-                    Length = "0",
+                    Length = "7:18",
                     FileName = "whatisasmr",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/whatisasmr.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/whatisasmr.mp3",
@@ -21,9 +21,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 2,
-                    Views = 0,
+                    Views = "30M",
                     Title = "10 Triggers to Help You Sleep",
-                    Length = "0",
+                    Length = "29:25",
                     FileName = "10triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/10triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/10triggerstohelpyousleep.mp3",
@@ -32,9 +32,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 3,
-                    Views = 0,
+                    Views = "30M",
                     Title = "20 Triggers to Help You Sleep",
-                    Length = "0",
+                    Length = "56:42",
                     FileName = "20triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/20triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/20triggerstohelpyousleep.mp3",
@@ -43,9 +43,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 4,
-                    Views = 0,
+                    Views = "21M",
                     Title = "100 Triggers to Help You Sleep",
-                    Length = "0",
+                    Length = "4:26:07",
                     FileName = "100triggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/100triggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/100triggerstohelpyousleep.mp3",
@@ -54,9 +54,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 5,
-                    Views = 0,
+                    Views = "22M",
                     Title = "A to Z Triggers to Help You Sleep",
-                    Length = "0",
+                    Length = "1:52:43",
                     FileName = "atoztriggerstohelpyousleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/atoztriggerstohelpyousleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/atoztriggerstohelpyousleep.mp3",
@@ -65,9 +65,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 6,
-                    Views = 0,
+                    Views = "7.5M",
                     Title = "Brushing the Microphone",
-                    Length = "0",
+                    Length = "35:33",
                     FileName = "brushingthemicrophone",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/brushingthemicrophone.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/brushingthemicrophone.mp3",
@@ -76,9 +76,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 7,
-                    Views = 0,
+                    Views = "7.2M",
                     Title = "Relaxing Head Massage",
-                    Length = "0",
+                    Length = "23:44",
                     FileName = "relaxingheadmassage",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingheadmassage.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/relaxingheadmassage.mp3",
@@ -87,9 +87,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 8,
-                    Views = 0,
+                    Views = "12M",
                     Title = "Relaxing Scalp Massage",
-                    Length = "0",
+                    Length = "22:50",
                     FileName = "relaxingscalpmassage",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/relaxingscalpmassage.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/relaxingscalpmassage.mp3",
@@ -98,9 +98,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 9,
-                    Views = 0,
+                    Views = "11M",
                     Title = "Whispered Tapping and Scratching",
-                    Length = "0",
+                    Length = "35:06",
                     FileName = "whisperedtappingandscratching",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/whisperedtappingandscratching.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/whisperedtappingandscratching.mp3",
@@ -109,9 +109,9 @@ namespace Sonnar.Models
 
                 new MediaItem() {
                     Id = 10,
-                    Views = 0,
+                    Views = "10M",
                     Title = "Close Up Personal Attention For You to Sleep",
-                    Length = "0",
+                    Length = "29:32",
                     FileName = "closeuppersonalattentionforyoutosleep",
                     Thumbnail = "https://s3.amazonaws.com/asmr-darling-api-media/png/closeuppersonalattentionforyoutosleep.png",
                     AudioSource = "https://s3.amazonaws.com/asmr-darling-api-media/mp3/closeuppersonalattentionforyoutosleep.mp3",

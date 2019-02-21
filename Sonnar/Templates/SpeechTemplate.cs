@@ -13,13 +13,14 @@
         public const string SeeYouSoon = "See you soon. ";
 
         public const string NoCommand = "The command you have given is not supported. Please say list, or play followed by name of the media. ";
-        public const string IntentUnknown = "Sorry, I didn't understand your intent. Please try again. ";
-        public const string RequestUnknown = "Sorry, I didn't understand your request. Please try again. ";
+        public const string NotUnderstand = "I did not understand. ";
+        public const string IntentUnknown = "I didn't understand your intent. Please try again. ";
+        public const string RequestUnknown = "I didn't understand your request. Please try again. ";
         public const string SystemException = "Unable to process your request, due to system failures. Please try again. ";
 
 
 #warning add foreach loop to concat
-        public static string ListItems = "Here is the list of ASMR items. What is ASMR." +
+        public static string ListItems = "Here is the list of ASMR items. What is ASMR. " +
                                          "10 triggers to help you sleep. " +
                                          "20 triggers to help you sleep. " +
                                          "100 triggers to help you sleep. " +

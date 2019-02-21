@@ -6,9 +6,6 @@
 
         public const string HashKey = "UserId";             // custom hash key for dynamodb
         public const string TableName = "MediaStates";      // custom dynamodb table name
-
-        public const string DbAccessKey = "";                       // custom dynamodb access key
-        public const string DbSecretKey = "";   // custom dynamodb secret key
     }
 
 

@@ -6,7 +6,7 @@ namespace Sonnar.Helpers
     {
         public static T SelectItem<T>(List<T> itemList, string targetProp, string targetString)
         {
-            return itemList.Find(i => i.GetType().GetProperty(targetProp).GetValue(i, null).ToString().Equals(targetString));
+            return itemList.Find(i => i.GetType().GetProperty(targetProp).GetValue(i, null).ToString().Contains(targetString));
         }
 
 

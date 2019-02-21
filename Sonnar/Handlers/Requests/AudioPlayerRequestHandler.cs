@@ -51,8 +51,9 @@ namespace Sonnar.Handlers
                             if (index == MediaItems.GetMediaItems().Count)
                                 index = 0;
 
+                            index = index == 0 ? 0 : index + 1;
                             Core.State.UserState.EnqueuedToken = mediaItems[index].Title;
-                            Core.State.UserState.State = request.Token;
+                            Core.State.UserState.Token = request.Token;
                             Core.Response.AddAudioPlayer(PlayBehavior.Enqueue, mediaItems[index].AudioSource, Core.State.UserState.EnqueuedToken, Core.State.UserState.Token, 0);
                         }
                         break;

@@ -70,8 +70,8 @@ namespace AsmrDarlingAlexaSkill
             }
 
 
-            //Core.Logger.Write("Function.FunctionHandler()", $"User state details: {JsonConvert.SerializeObject(Core.State)}");
-            //Core.Logger.Write("Function.FunctionHandler()", $"Response details: {JsonConvert.SerializeObject(Core.Response.GetResponse())}");
+            Core.Logger.Write("Function.FunctionHandler()", $"User state details: {JsonConvert.SerializeObject(Core.State)}");
+            Core.Logger.Write("Function.FunctionHandler()", $"Response details: {JsonConvert.SerializeObject(Core.Response.GetResponse())}");
 
 
             // save database context

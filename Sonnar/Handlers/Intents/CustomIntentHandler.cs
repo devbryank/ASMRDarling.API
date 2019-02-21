@@ -29,51 +29,61 @@ namespace Sonnar.Handlers
                 string rawValue = slot.Value;
                 Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"Sub intent raw slot value: {rawValue}");
 
-                ResolutionAuthority[] resolution = slot.Resolution.Authorities;
-                ResolutionValueContainer[] container = resolution[0].Values;
-                slotValue = container[0].Value.Name;
-
+                try
+                {
+                    ResolutionAuthority[] resolution = slot.Resolution.Authorities;
+                    ResolutionValueContainer[] container = resolution[0].Values;
+                    slotValue = container[0].Value.Name;
+                }
+                catch { slotValue = rawValue; }
 
                 if (slotValue == ("List"))
                     Core.Response.SetAskSpeech(SpeechTemplate.ListItems);
                 else
                 {
-                    List<MediaItem> mediaItems = MediaItems.GetMediaItems();
-                    List<MediaItem> selectedMedia = ItemSelectHelper.SelectItems(mediaItems, "Title", slotValue);
-
-                    // query possible entries
-                    if (selectedMedia.Count > 1)
+                    if (slotValue != null && slotValue != string.Empty)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append($"I found {selectedMedia.Count} media items matching {slotValue}. ");
-                        Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"{selectedMedia.Count} matching items found for {slotValue}");
+                        List<MediaItem> mediaItems = MediaItems.GetMediaItems();
+                        List<MediaItem> selectedMedia = ItemSelectHelper.SelectItems(mediaItems, "Title", slotValue);
 
-                        foreach (MediaItem mediaItem in selectedMedia)
-                            sb.Append(mediaItem.Title + ". ");
+                        // query possible entries
+                        if (selectedMedia.Count > 1)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append($"I found {selectedMedia.Count} media items matching {slotValue}. ");
+                            Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"{selectedMedia.Count} matching items found for {slotValue}");
 
-                        sb.Append("Please say play followed by one of the options. ");
-                        Core.Response.SetAskSpeech(sb.ToString());
-                    }
-                    else
-                    {
-                        MediaItem mediaItem = ItemSelectHelper.SelectItem(mediaItems, "Title", slotValue);
-                        Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"Item requested: {mediaItem.Title}");
+                            foreach (MediaItem mediaItem in selectedMedia)
+                                sb.Append(mediaItem.Title + ". ");
 
-                        Core.State.UserState.Index = mediaItem.Id;
-                        Core.State.UserState.Token = mediaItem.FileName;
-                        Core.State.UserState.State = "PLAY_MODE";
-
-                        // source type will differ based on the display interface
-                        string url = Core.Device.HasScreen ? mediaItem.VideoSource : mediaItem.AudioSource;
-                        Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"File source url: {url}");
-
-                        ProgressiveResponse progressiveResponse = new ProgressiveResponse(Core.Request.GetRequest());
-                        await progressiveResponse.SendSpeech($"Playing {mediaItem.Title}. ");
-
-                        if (Core.Device.HasScreen)
-                            Core.Response.AddVideoApp(url, mediaItem.Title, mediaItem.FileName);
+                            sb.Append("Please say play followed by one of the options. ");
+                            Core.Response.SetAskSpeech(sb.ToString());
+                        }
+                        else if (selectedMedia.Count == 0)
+                        {
+                            Core.Response.SetAskSpeech(SpeechTemplate.NotUnderstand + SpeechTemplate.MoreOptions);
+                        }
                         else
-                            Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, url, Core.State.UserState.Token);
+                        {
+                            MediaItem mediaItem = selectedMedia[0];
+                            Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"Item requested: {mediaItem.Title}");
+
+                            Core.State.UserState.Index = mediaItem.Id;
+                            Core.State.UserState.Token = mediaItem.FileName;
+                            Core.State.UserState.State = "PLAY_MODE";
+
+                            // source type will differ based on the display interface
+                            string url = Core.Device.HasScreen ? mediaItem.VideoSource : mediaItem.AudioSource;
+                            Core.Logger.Write("CustomIntentHandler.HandleRequest()", $"File source url: {url}");
+
+                            ProgressiveResponse progressiveResponse = new ProgressiveResponse(Core.Request.GetRequest());
+                            await progressiveResponse.SendSpeech($"Playing {mediaItem.Title}. ");
+
+                            if (Core.Device.HasScreen)
+                                Core.Response.AddVideoApp(url, mediaItem.Title, mediaItem.FileName);
+                            else
+                                Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, url, Core.State.UserState.Token);
+                        }
                     }
                 }
             });
