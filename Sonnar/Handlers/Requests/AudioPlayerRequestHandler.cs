@@ -20,26 +20,26 @@ namespace Sonnar.Handlers
             await RequestProcessHelper.ProcessRequest("AudioPlayerRequestHandler.HandleRequest()", "Audio Player Request", async () =>
             {
                 AudioPlayerRequest request = Core.Request.GetRequest().Request as AudioPlayerRequest;
+
                 List<MediaItem> mediaItems = MediaItems.GetMediaItems();
                 MediaItem currentMediaItem = mediaItems.Find(m => m.Title.Contains(request.Token));
 
                 switch (Core.Request.GetSubRequestType())
                 {
                     // handle playback started
-                    case AlexaRequests.PlaybackStarted:
-                        Core.Response.ClearQueue();
+                    case AlexaRequestType.PlaybackStarted:
+                        Core.Response.ClearAudioPlayer();
                         break;
 
                     // handle playback stopped
-                    case AlexaRequests.PlaybackStopped:
-                        Core.State.UserState.State = "PAUSE_MODE";
+                    case AlexaRequestType.PlaybackStopped:
                         Core.State.UserState.Token = request.Token;
                         Core.State.UserState.EnqueuedToken = request.EnqueuedToken;
                         Core.State.UserState.OffsetInMS = Convert.ToInt32(request.OffsetInMilliseconds);
                         break;
 
                     // handle playback nearly finished
-                    case AlexaRequests.PlaybackNearlyFinished:
+                    case AlexaRequestType.PlaybackNearlyFinished:
                         if (!request.HasEnqueuedItem)
                         {
                             var currentPlay = request.Token;
@@ -52,30 +52,31 @@ namespace Sonnar.Handlers
                                 index = 0;
 
                             index = index == 0 ? 0 : index + 1;
-                            Core.State.UserState.EnqueuedToken = mediaItems[index].Title;
+
                             Core.State.UserState.Token = request.Token;
+                            Core.State.UserState.EnqueuedToken = mediaItems[index].Title;
                             Core.Response.AddAudioPlayer(PlayBehavior.Enqueue, mediaItems[index].AudioSource, Core.State.UserState.EnqueuedToken, Core.State.UserState.Token, 0);
                         }
                         break;
 
                     // handle playback finished
-                    case AlexaRequests.PlaybackFinished:
+                    case AlexaRequestType.PlaybackFinished:
                         if (Core.State.UserState.EnqueuedToken != null)
                         {
                             int index = mediaItems.IndexOf(mediaItems.Where(m => m.Title == Core.State.UserState.EnqueuedToken).FirstOrDefault());
-                            Core.State.UserState.Token = mediaItems[index].Title;
                             Core.State.UserState.Index = index;
+                            Core.State.UserState.Token = mediaItems[index].Title;
                             Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, mediaItems[index].AudioSource, Core.State.UserState.Token);
                         }
                         else
-                            Core.Response.ClearQueue();
+                            Core.Response.ClearAudioPlayer();
                         break;
 
                     // handle playback failed
-                    case AlexaRequests.PlaybackFailed:
-                        Core.State.UserState.Token = mediaItems.FirstOrDefault().Title;
+                    case AlexaRequestType.PlaybackFailed:
                         Core.State.UserState.Index = 0;
-                        Core.State.UserState.State = "PLAY_MODE";
+                        Core.State.UserState.Stage = Stage.Menu;
+                        Core.State.UserState.Token = mediaItems.FirstOrDefault().Title;
                         Core.Response.AddAudioPlayer(PlayBehavior.ReplaceAll, mediaItems.FirstOrDefault().AudioSource, Core.State.UserState.Token);
                         break;
 

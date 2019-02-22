@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
-using Newtonsoft.Json;
-
+﻿using Alexa.NET.Request;
 using Amazon.Lambda.Core;
-
-using Alexa.NET.Request;
+using System.Threading.Tasks;
 
 namespace Sonnar.Components
 {
@@ -26,9 +23,7 @@ namespace Sonnar.Components
 
             // initialize logger
             Logger = new Logger(context.Logger);
-            Logger.Write("Core.Init()", $"{SkillSettings.SkillName} started");
-            Logger.Write("Core.Init()", $"Input details: {JsonConvert.SerializeObject(input)}");
-            Logger.Write("Core.Init()", $"Context details: {JsonConvert.SerializeObject(context)}");
+            Logger.Write("Core.Init()", $"{SkillSetting.SkillName} started");
 
             // get user id
             string userId = input.Session != null ? input.Session.User.UserId : input.Context.System.User.UserId;

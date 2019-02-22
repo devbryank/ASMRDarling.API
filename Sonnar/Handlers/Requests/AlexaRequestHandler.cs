@@ -13,14 +13,14 @@ namespace Sonnar.Handlers
     {
         public async Task HandleRequest()
         {
-            await RequestProcessHelper.ProcessRequest("AlexaRequestHandler.HandleRequest()", "Alexa Request", async () =>
+            await RequestProcessHelper.ProcessRequest("AlexaRequestHandler.HandleRequest()", "Alexa Request", (System.Func<Task>)(async () =>
             {
                 string subRequestType = Core.Request.GetSubRequestType();
 
                 switch (subRequestType)
                 {
                     // handle user gui event request
-                    case AlexaRequests.UserEventRequest:
+                    case AlexaRequestType.UserEventRequest:
                         UserEventRequest userEventRequest = Core.Request.GetRequest().Request as UserEventRequest;
 
                         string title = userEventRequest.Arguments[0] as string;
@@ -28,16 +28,18 @@ namespace Sonnar.Handlers
 
                         Core.Logger.Write("AlexaRequestHandler.HandleRequest()", $"Media file title: {title}");
                         Core.Logger.Write("AlexaRequestHandler.HandleRequest()", $"Media file source url: {url}");
-
+                        Core.State.UserState.Stage = Stage.Video;
                         Core.Response.AddVideoApp(url, title, title);
                         break;
 
                     // handle unknown intent
                     default:
-                        Core.Response.SetTellSpeech(SpeechTemplate.IntentUnknown);
+                        Core.State.UserState.Stage = Stage.Menu;
+
+                        Core.Response.SetSpeech(false, false, (string)SpeechTemplate.NoUnderstand);
                         break;
                 }
-            });
+            }));
         }
     }
 }

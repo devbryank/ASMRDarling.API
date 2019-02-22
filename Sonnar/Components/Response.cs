@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-
-using Alexa.NET;
+﻿using Alexa.NET;
 using Alexa.NET.Response;
 using Alexa.NET.Response.APL;
 using Alexa.NET.Response.Directive;
+using System.Collections.Generic;
 
 namespace Sonnar.Components
 {
@@ -19,25 +18,13 @@ namespace Sonnar.Components
         }
 
 
-        public SkillResponse GetResponse()
+        public SkillResponse GetResponse() { return Skill; }
+
+
+        public void SetSpeech(bool isSsml, bool endSession, string text)
         {
-            return Skill;
-        }
-
-
-        public void SetAskSpeech(string text)
-        {
-            PlainTextOutputSpeech speech = new PlainTextOutputSpeech { Text = text };
-            Skill.Response.ShouldEndSession = false;
-            Skill.Response.OutputSpeech = speech;
-        }
-
-
-        public void SetTellSpeech(string text)
-        {
-            PlainTextOutputSpeech speech = new PlainTextOutputSpeech { Text = text };
-            Skill.Response.ShouldEndSession = true;
-            Skill.Response.OutputSpeech = speech;
+            Skill.Response.ShouldEndSession = endSession;
+            Skill.Response.OutputSpeech = isSsml ? new SsmlOutputSpeech { Ssml = text } as IOutputSpeech : new PlainTextOutputSpeech { Text = text } as IOutputSpeech;
         }
 
 
@@ -45,6 +32,8 @@ namespace Sonnar.Components
         {
             RemoveDirective();
             Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, token);
+            Skill.Response.ShouldEndSession = true;
+
         }
 
 
@@ -52,6 +41,8 @@ namespace Sonnar.Components
         {
             RemoveDirective();
             Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, token, offset);
+            Skill.Response.ShouldEndSession = true;
+
         }
 
 
@@ -59,6 +50,14 @@ namespace Sonnar.Components
         {
             RemoveDirective();
             Skill = ResponseBuilder.AudioPlayerPlay(behavior, url, enqueuedToken, token, offset);
+            Skill.Response.ShouldEndSession = true;
+
+        }
+
+
+        public void ClearAudioPlayer()
+        {
+            Skill = ResponseBuilder.AudioPlayerClearQueue(ClearBehavior.ClearEnqueued);
         }
 
 
@@ -70,6 +69,8 @@ namespace Sonnar.Components
 
         public void AddVideoApp(string url, string title, string subtitle)
         {
+            RemoveDirective();
+
             VideoAppDirective videoAppDirective = new VideoAppDirective
             {
                 VideoItem = new VideoItem(url)
@@ -109,24 +110,21 @@ namespace Sonnar.Components
         public void RemoveDirective()
         {
             if (Skill.Response.Directives == null)
-            {
                 return;
-            }
 
             List<IDirective> newDirectives = new List<IDirective>();
             foreach (var directive in Skill.Response.Directives)
             {
-                if (directive.GetType() != typeof(RenderDocumentDirective) && directive.GetType() != typeof(ExecuteCommandsDirective) && directive.GetType() != typeof(AudioPlayerPlayDirective))
+                if (
+                    directive.GetType() != typeof(VideoAppDirective) &&
+                    directive.GetType() != typeof(RenderDocumentDirective) &&
+                    directive.GetType() != typeof(AudioPlayerPlayDirective) &&
+                    directive.GetType() != typeof(ExecuteCommandsDirective))
+
                     newDirectives.Add(directive);
             }
 
             Skill.Response.Directives = newDirectives;
-        }
-
-
-        public void ClearQueue()
-        {
-            Skill = ResponseBuilder.AudioPlayerClearQueue(ClearBehavior.ClearEnqueued);
         }
     }
 }

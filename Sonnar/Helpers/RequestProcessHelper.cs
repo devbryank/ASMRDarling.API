@@ -21,7 +21,7 @@ namespace Sonnar.Helpers
             {
                 Core.Logger.Write($"{funcName}", $"Unable to process {taskName}");
                 Core.Logger.Write($"{funcName}", $"Exception details: {JsonConvert.SerializeObject(ex)}");
-                Core.Response.SetTellSpeech(SpeechTemplate.SystemException);
+                Core.Response.SetSpeech(false, true, SpeechTemplate.SystemException);
             }
         }
     }

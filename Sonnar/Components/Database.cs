@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
 
 using Amazon;
@@ -35,8 +36,8 @@ namespace Sonnar.Components
 
         public async Task VerifyTable()
         {
-            Core.Logger.Write("Database.VerifyTable()", $"Table {SkillSettings.TableName} verification started");
-            await VerifyTable(SkillSettings.TableName);
+            Core.Logger.Write("Database.VerifyTable()", $"Table {SkillSetting.TableName} verification started");
+            await VerifyTable(SkillSetting.TableName);
         }
 
 
@@ -65,11 +66,11 @@ namespace Sonnar.Components
                 ProvisionedThroughput = new ProvisionedThroughput { ReadCapacityUnits = 3, WriteCapacityUnits = 1 },
                 KeySchema = new List<KeySchemaElement>
                     {
-                        new KeySchemaElement{ AttributeName = SkillSettings.HashKey, KeyType = KeyType.HASH }
+                        new KeySchemaElement{ AttributeName = SkillSetting.HashKey, KeyType = KeyType.HASH }
                     },
                 AttributeDefinitions = new List<AttributeDefinition>
                     {
-                        new AttributeDefinition { AttributeName = SkillSettings.HashKey, AttributeType=ScalarAttributeType.S }
+                        new AttributeDefinition { AttributeName = SkillSetting.HashKey, AttributeType=ScalarAttributeType.S }
                     }
             });
 
@@ -97,11 +98,10 @@ namespace Sonnar.Components
         public async Task<State> GetState()
         {
             Core.Logger.Write("Database.GetState()", "Acquiring user state for the requested user");
-            Core.Logger.Write("Database.GetState()", $"User id: {UserId}");
 
             List<ScanCondition> conditions = new List<ScanCondition>
             {
-                new ScanCondition(SkillSettings.HashKey, ScanOperator.Equal, UserId)
+                new ScanCondition(SkillSetting.HashKey, ScanOperator.Equal, UserId)
             };
 
             var allDocs = await DbContext.ScanAsync<State>(conditions).GetRemainingAsync();
@@ -116,7 +116,7 @@ namespace Sonnar.Components
             UserState.UserState = SetDefaultState();
 
             Core.Logger.Write("Database.GetState()", "User state initialized");
-            Core.Logger.Write("Database.GetState()", $"Initialized state details: {JsonConvert.SerializeObject(UserState)}");
+            Core.Logger.Write("Database.GetState()", $"User state details: {JsonConvert.SerializeObject(UserState)}");
 
             return UserState;
         }
@@ -144,7 +144,8 @@ namespace Sonnar.Components
                 PlaybackIndexChanged = false,
                 PlayOrder = new List<int>(),
                 NumTimesPlayed = 0,
-                State = "MENU_MODE",
+                NumReprompt = 0,
+                Stage = "MENU_MODE",
             };
 
             return map;

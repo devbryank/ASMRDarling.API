@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 using Amazon.Lambda.Core;
 
@@ -15,69 +15,76 @@ using Sonnar.Components;
 
 namespace AsmrDarlingAlexaSkill
 {
+    // entry point for lamba function
     public class Function
     {
         public async Task<SkillResponse> FunctionHandler(APLSkillRequest input, ILambdaContext context)
         {
-            // core library initialization
+            // core initialization
             await Core.Init(input, context);
 
 
-            // direct request into the matching handler
+            // direct request in a matching handler
             switch (Core.Request.GetMainRequestType())
             {
-                // handle launch request
-                case AlexaRequests.LaunchRequest:
+                // handle launch reqeust
+                case AlexaRequestType.LaunchRequest:
                     LaunchRequestHandler launchRequestHandler = new LaunchRequestHandler();
                     await launchRequestHandler.HandleRequest();
                     break;
 
                 // handle intent request
-                case AlexaRequests.IntentRequest:
+                case AlexaRequestType.IntentRequest:
                     IntentReqeustHandler intentRequestHandler = new IntentReqeustHandler();
                     await intentRequestHandler.HandleRequest();
                     break;
 
                 // handle audio player request
-                case AlexaRequests.AudioPlayerRequest:
+                case AlexaRequestType.AudioPlayerRequest:
                     AudioPlayerRequestHandler audioPlayerRequestHandler = new AudioPlayerRequestHandler();
                     await audioPlayerRequestHandler.HandleRequest();
                     break;
 
-                // handle gui user event request
-                case AlexaRequests.AlexaRequest:
+                // handle gui event request
+                case AlexaRequestType.AlexaRequest:
                     AlexaRequestHandler alexaRequestHandler = new AlexaRequestHandler();
                     await alexaRequestHandler.HandleRequest();
                     break;
 
-                // handle session ended request
-                case AlexaRequests.SessionEndedRequest:
+                // handle session eneded request
+                case AlexaRequestType.SessionEndedRequest:
                     SessionEndedRequestHandler sessionEndedRequestHandler = new SessionEndedRequestHandler();
                     await sessionEndedRequestHandler.HandleRequest();
                     break;
 
                 // handle system exception request
-                case AlexaRequests.SystemRequest:
+                case AlexaRequestType.SystemRequest:
                     SystemRequestHandler systemRequestHandler = new SystemRequestHandler();
                     await systemRequestHandler.HandleRequest();
                     break;
 
                 // handle unknown request
                 default:
-                    Core.Logger.Write("Function.FunctionHandler()", "Request was not recognized, directing into the default request fallback");
-                    Core.Response.SetTellSpeech(SpeechTemplate.RequestUnknown);
+                    bool endSession = Core.State.UserState.NumReprompt > 4 ? true : false;
+                    if (endSession)
+                        Core.State.UserState.NumReprompt = 0;
+                    Core.Logger.Write("Function.FunctionHandler()", "Request was not recognized, directing into the default case handler");
+                    Core.Response.SetSpeech(false, endSession, SpeechTemplate.NoUnderstand);
+                    Core.State.UserState.Stage = Stage.Menu;
+                    Core.State.UserState.NumReprompt++;
+                    if (endSession)
+                        Core.State.UserState.NumReprompt = 0;
                     break;
             }
 
 
-            Core.Logger.Write("Function.FunctionHandler()", $"User state details: {JsonConvert.SerializeObject(Core.State)}");
+            // log returning message details
             Core.Logger.Write("Function.FunctionHandler()", $"Response details: {JsonConvert.SerializeObject(Core.Response.GetResponse())}");
+            Core.Logger.Write("Function.FunctionHandler()", $"User state details: {JsonConvert.SerializeObject(Core.State)}");
 
 
-            // save database context
+            // save database context then return
             await Core.Database.SaveState();
-
-            // return response to alexa
             return Core.Response.GetResponse();
         }
     }

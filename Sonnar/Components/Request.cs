@@ -1,4 +1,5 @@
-﻿using Alexa.NET.Request;
+﻿using Newtonsoft.Json;
+using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 
 namespace Sonnar.Components
@@ -16,47 +17,24 @@ namespace Sonnar.Components
 
         public Request(APLSkillRequest request)
         {
+            Skill = new APLSkillRequest();
             Skill = request;
+
             SetRequestTypes();
             if (request.Request.GetType() == typeof(IntentRequest))
                 SetIntentTypes();
+
+            Core.Logger.Write("Request.Request()", $"Request details: {JsonConvert.SerializeObject(request)}");
         }
 
 
-        public APLSkillRequest GetRequest()
-        {
-            return Skill;
-        }
+        public Session GetSession() { return Skill.Session; }
+        public APLSkillRequest GetRequest() { return Skill; }
 
-
-        public Session GetSession()
-        {
-            return Skill.Session;
-        }
-
-
-        public string GetMainRequestType()
-        {
-            return MainRequestType;
-        }
-
-
-        public string GetSubRequestType()
-        {
-            return SubRequestType;
-        }
-
-
-        public string GetMainIntentType()
-        {
-            return MainIntentType;
-        }
-
-
-        public string GetSubIntentType()
-        {
-            return SubIntentType;
-        }
+        public string GetMainRequestType() { return MainRequestType; }
+        public string GetSubRequestType() { return SubRequestType; }
+        public string GetMainIntentType() { return MainIntentType; }
+        public string GetSubIntentType() { return SubIntentType; }
 
 
         private void SetRequestTypes()

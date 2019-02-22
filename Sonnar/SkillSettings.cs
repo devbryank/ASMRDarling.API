@@ -1,18 +1,27 @@
 ﻿namespace Sonnar
 {
-    class SkillSettings
+    class SkillSetting
     {
-        public const string SkillName = "Darling's gift";   // custom invocation & skill name
+        public const string SkillName = "ASMR Darling";
 
-        public const string HashKey = "UserId";             // custom hash key for dynamodb
-        public const string TableName = "MediaStates";      // custom dynamodb table name
+        public const string HashKey = "UserId";
+        public const string TableName = "MediaStates";
     }
 
 
-    static class AlexaRequests
+    class Stage
     {
-        public const string CustomIntent = "PlayASMR";      // custom intent name
-        public const string CustomSlot = "MediaItemName";   // custom slot name
+        public const string Menu = "MENU_MODE";
+        public const string Audio = "AUDIO_MODE";
+        public const string Video = "VIDEO_MODE";
+        public const string Pause = "PAUSE_MODE";
+    }
+
+
+    static class AlexaRequestType
+    {
+        public const string CustomIntent = "PlayASMR";
+        public const string CustomSlot = "MediaItemName";
 
         public const string AlexaRequest = "Alexa";
         public const string SystemRequest = "System";

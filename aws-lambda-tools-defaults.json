@@ -17,5 +17,5 @@
     "function-name"        : "asmr-darling-alexa-skill",
     "function-role"        : "arn:aws:iam::694430503892:role/lambda_exec_asmr-darling-alexa-skill",
     "tracing-mode"         : "PassThrough",
-    "environment-variables" : "\"DbAccessKey\"=\"AKIAJ6VX4LP76SFJHU3A\";\"DbSecretKey\"=\"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\""
+    "environment-variables" : "\"DbAccessKey\"=\"\";\"DbSecretKey\"=\"\""
 }

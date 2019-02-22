@@ -1,4 +1,5 @@
-﻿using Amazon.Lambda.Core;
+﻿using Newtonsoft.Json;
+using Amazon.Lambda.Core;
 
 namespace Sonnar.Components
 {
@@ -10,6 +11,7 @@ namespace Sonnar.Components
         public Context(ILambdaContext context)
         {
             SkillContext = context;
+            Core.Logger.Write("Context.Context()", $"Context details: {JsonConvert.SerializeObject(context)}");
         }
     }
 }

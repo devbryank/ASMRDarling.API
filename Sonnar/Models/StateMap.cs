@@ -14,6 +14,7 @@ namespace Sonnar.Models
         public bool PlaybackIndexChanged { get; set; }
         public List<int> PlayOrder { get; set; }
         public int NumTimesPlayed { get; set; }
-        public string State { get; set; }
+        public int NumReprompt { get; set; }
+        public string Stage { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using Sonnar.Models;
 
 namespace Sonnar.Components
 {
-    [DynamoDBTable(SkillSettings.TableName)]
+    [DynamoDBTable(SkillSetting.TableName)]
     class State
     {
         [DynamoDBHashKey]

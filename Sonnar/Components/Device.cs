@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-using Alexa.NET.APL;
+﻿using Alexa.NET.APL;
 using Alexa.NET.Request;
-
 using Sonnar.Helpers;
+using System.Collections.Generic;
 
 namespace Sonnar.Components
 {

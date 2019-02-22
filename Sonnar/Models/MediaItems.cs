@@ -9,7 +9,7 @@ namespace Sonnar.Models
             List<MediaItem> mediaItems = new List<MediaItem>
             {
                 new MediaItem() {
-                    Id = 1,
+                    Id = 0,
                     Views = "3.1M",
                     Title = "What is ASMR",
                     Length = "7:18",
@@ -20,7 +20,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 2,
+                    Id = 1,
                     Views = "30M",
                     Title = "10 Triggers to Help You Sleep",
                     Length = "29:25",
@@ -31,7 +31,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 3,
+                    Id = 2,
                     Views = "30M",
                     Title = "20 Triggers to Help You Sleep",
                     Length = "56:42",
@@ -42,7 +42,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 4,
+                    Id = 3,
                     Views = "21M",
                     Title = "100 Triggers to Help You Sleep",
                     Length = "4:26:07",
@@ -53,7 +53,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 5,
+                    Id = 4,
                     Views = "22M",
                     Title = "A to Z Triggers to Help You Sleep",
                     Length = "1:52:43",
@@ -64,7 +64,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 6,
+                    Id = 5,
                     Views = "7.5M",
                     Title = "Brushing the Microphone",
                     Length = "35:33",
@@ -75,7 +75,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 7,
+                    Id = 6,
                     Views = "7.2M",
                     Title = "Relaxing Head Massage",
                     Length = "23:44",
@@ -86,7 +86,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 8,
+                    Id = 7,
                     Views = "12M",
                     Title = "Relaxing Scalp Massage",
                     Length = "22:50",
@@ -97,7 +97,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 9,
+                    Id = 8,
                     Views = "11M",
                     Title = "Whispered Tapping and Scratching",
                     Length = "35:06",
@@ -108,7 +108,7 @@ namespace Sonnar.Models
                 },
 
                 new MediaItem() {
-                    Id = 10,
+                    Id = 9,
                     Views = "10M",
                     Title = "Close Up Personal Attention For You to Sleep",
                     Length = "29:32",
