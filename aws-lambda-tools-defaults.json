@@ -15,7 +15,6 @@
     "function-timeout"     : 30,
     "function-handler"     : "AsmrDarlingAlexaSkill::AsmrDarlingAlexaSkill.Function::FunctionHandler",
     "function-name"        : "asmr-darling-alexa-skill",
-    "function-role"        : "arn:aws:iam::694430503892:role/lambda_exec_asmr-darling-alexa-skill",
     "tracing-mode"         : "PassThrough",
-    "environment-variables" : "\"DbAccessKey\"=\"\";\"DbSecretKey\"=\"\""
+    "environment-variables" : "\"DbAccessKey\"=\;\"DbSecretKey\"=\"
 }

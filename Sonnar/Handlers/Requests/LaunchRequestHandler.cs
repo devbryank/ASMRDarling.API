@@ -66,7 +66,7 @@ namespace Sonnar.Handlers
             StringBuilder sb = new StringBuilder();
             sb.Append("Sounds like you enjoy our skill. ");
             //sb.Append(" If you wish to keep using it for free, all it takes is a 5 stars review. ");
-            sb.Append(" Search for ASMR Daring in your alexa app and select write a review. ");
+            sb.Append(" Search for ASMR Darling in your alexa app and select write a review. ");
             if (Core.State.UserState.NumTimesPlayed == 5)
             {
                 sb.Append(" Don't worry, I am going to remind you about this only one more time. ");

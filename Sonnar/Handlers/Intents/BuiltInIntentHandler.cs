@@ -198,7 +198,7 @@ namespace Sonnar.Handlers
 
                     // handle unknown intent
                     default:
-                        bool endSession = Core.State.UserState.NumReprompt > 4 ? true : false;
+                        bool endSession = Core.State.UserState.NumReprompt > 5 ? true : false;
                         Core.Logger.Write("BuiltInIntentHandler.HandleRequest()", "Intent was not recognized, directing into the default case handler");
                         Core.Response.SetSpeech(false, endSession, SpeechTemplate.NoUnderstand);
                         Core.State.UserState.Stage = Stage.Menu;

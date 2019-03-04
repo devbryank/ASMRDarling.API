@@ -23,6 +23,11 @@ namespace Sonnar.Components
 
         public void SetSpeech(bool isSsml, bool endSession, string text)
         {
+            if (Core.State.UserState.NumReprompt > 5)
+            {
+                Core.State.UserState.NumReprompt = 0;
+                endSession = true;
+            }
             Skill.Response.ShouldEndSession = endSession;
             Skill.Response.OutputSpeech = isSsml ? new SsmlOutputSpeech { Ssml = text } as IOutputSpeech : new PlainTextOutputSpeech { Text = text } as IOutputSpeech;
         }

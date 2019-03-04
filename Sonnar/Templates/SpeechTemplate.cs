@@ -67,6 +67,8 @@ namespace Sonnar.Templates
                     break;
             }
 
+            Core.State.UserState.NumReprompt++;
+
             return reprompt;
         }
     }
